@@ -22,9 +22,13 @@
 .headingRow{
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  padding: 10px;
+  justify-content: space-between; /* Change from 'space-around' to 'space-between' for even spacing */
+  align-items: center; /* Add this to vertically center the items */
+  height: 32px;
+ 
+  //color: white; /* Add this to change the text color to white */
 }
+
 
 .links {
   a {
