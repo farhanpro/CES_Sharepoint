@@ -6,9 +6,9 @@ export default class DataServices{
     public constructor(context:WebPartContext){
         sp = spfi().using(SPFx(context));
     }
-    public getItems = async () =>{ 
+    public getItems = async (libraryName:string) =>{ 
         try{   
-          return  await sp.web.lists.getByTitle('Internal Tranings').items
+          return  await sp.web.lists.getByTitle(libraryName).items
             .select('File/Name, Modified, Editor/Title', "FileRef","FileLeafRef").expand('File', 'Editor')();
     }
     catch(error){

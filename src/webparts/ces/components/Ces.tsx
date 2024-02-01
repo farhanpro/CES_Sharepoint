@@ -37,7 +37,7 @@ export default class Ces extends React.Component<ICesProps, ICesState> {
     this.state = {
     ID:"",
     Title:"",
-    FileType:"",
+   
     ModifiedBy:"",
     ModifiedOn:"",
     CesArr:[]
@@ -51,35 +51,26 @@ export default class Ces extends React.Component<ICesProps, ICesState> {
   
  async componentDidMount(): Promise<void> {
 
-  const data: { Name: any;Modified:any; ModifiedBy: any; FileType: string;FileRed:string;FileLeafRef:string; }[] = [];
+  const data: { Name: any;Modified:any; ModifiedBy: any; FileRed:string;FileLeafRef:string; }[] = [];
     //const web = Web(this.props.webURL);
     try {
       // get documents using pnp js web
-      const internalTraning = await commonService.getItems();
+      const internalTraning = await commonService.getItems('Internal Tranings');
       console.log(internalTraning);
   
       // Mapping data
       internalTraning.map((element:any) => {
         // Extract file extension from the file name
         const fileName = element.File.Name;
-        const fileExtension = fileName.split('.').pop().toLowerCase();
+      
   
-        // Determine file type based on file extension
-        let fileType = 'Unknown';
-        if (fileExtension === 'pdf') {
-          fileType = 'PDF';
-        } else if (['xls', 'xlsx'].indexOf(fileExtension)) {
-          fileType = 'xls';
-        } else if (['mp4', 'avi', 'mkv'].indexOf(fileExtension)) {
-          fileType = 'Video';
-        }
         
   
         data.push({
           Name: fileName,
           Modified: element.Modified,
           ModifiedBy: element.Editor.Title,
-          FileType: fileType,
+         
           FileLeafRef: element.FileLeafRef,
           FileRed: element.FileRef,
         });
@@ -87,13 +78,13 @@ export default class Ces extends React.Component<ICesProps, ICesState> {
           ID: element.ID,
           Title: fileName,
           ModifiedBy:element.Editor.Title,
-          FileType: fileType,
+         
           ModifiedOn:element.Modified,
           CesArr:[...this.state.CesArr,
             {
               ID: element.ID,
           Title: fileName,
-          FileType: fileType,
+          
           ModifiedBy:element.Editor.Title,
           ModifiedOn:element.Modified,
             }]
@@ -113,7 +104,7 @@ export default class Ces extends React.Component<ICesProps, ICesState> {
     
     const fileTypeIconProps = ({
       type: IconType.image, // Change to IconType.image for image file icons
-      path: item.FileType, // Use file extension or full path depending on your requirement
+      path: item.Title, // Use file extension or full path depending on your requirement
       size: ImageSize.small,
     });
   
@@ -128,7 +119,7 @@ export default class Ces extends React.Component<ICesProps, ICesState> {
     <Stack className={styles.headingRow}>
       <h4>Internal traning</h4>
 
-      <Stack style={{display:"flex",flexDirection:"row",justifyContent:"space-between",alignContent:"space-evenly",width:"40px"}}>
+      <Stack style={{display:"flex",flexDirection:"row",justifyContent:"space-between",width:"180px"}}>
       <Icon
               iconName="CloudUpload"
               aria-label="Add Online Event Icon"

@@ -9,11 +9,38 @@
           "manifest": "./src/webparts/ces/CesWebPart.manifest.json"
         }
       ]
+    },
+    "customer-presentation-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/customerPresentation/CustomerPresentationWebPart.js",
+          "manifest": "./src/webparts/customerPresentation/CustomerPresentationWebPart.manifest.json"
+        }
+      ]
+    },
+    "ae-resources-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/aeResources/AeResourcesWebPart.js",
+          "manifest": "./src/webparts/aeResources/AeResourcesWebPart.manifest.json"
+        }
+      ]
+    },
+    "competitve-information-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/competitveInformation/CompetitveInformationWebPart.js",
+          "manifest": "./src/webparts/competitveInformation/CompetitveInformationWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "CesWebPartStrings": "lib/webparts/ces/loc/{locale}.js",
-    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "CustomerPresentationWebPartStrings": "lib/webparts/customerPresentation/loc/{locale}.js",
+    "AeResourcesWebPartStrings": "lib/webparts/aeResources/loc/{locale}.js",
+    "CompetitveInformationWebPartStrings": "lib/webparts/competitveInformation/loc/{locale}.js"
   }
 }
