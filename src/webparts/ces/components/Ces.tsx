@@ -12,6 +12,8 @@ import styles from './Ces.module.scss';
 import { ICesState } from './ICesStates';
 import DataServices from '../common/dataservices';
 import { FileTypeIcon, IconType, ImageSize } from "@pnp/spfx-controls-react/lib/FileTypeIcon";
+import * as moment from 'moment';
+
 
 //import { getFileTypeIconProps, FileIconType } from '@fluentui/react-file-type-icons';
 
@@ -79,14 +81,14 @@ export default class Ces extends React.Component<ICesProps, ICesState> {
           Title: fileName,
           ModifiedBy:element.Editor.Title,
          
-          ModifiedOn:element.Modified,
+          ModifiedOn:moment(element.Modified).format("DD-MM-YYYY"),
           CesArr:[...this.state.CesArr,
             {
               ID: element.ID,
           Title: fileName,
           
           ModifiedBy:element.Editor.Title,
-          ModifiedOn:element.Modified,
+          ModifiedOn:moment(element.Modified).format("DD-MM-YYYY"),
             }]
         });
       });

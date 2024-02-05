@@ -1,15 +1,14 @@
-export interface IAeResourcesState{
+export interface ICompetitiveInformationState{
     ID:string;
     Title:string;
     ModifiedBy:string;
     ModifiedOn:string;
-    FileType:string;
-    CesArr:IAeresourcesArr[];
+    CiArr:ICompetitiveInformation[];
+
 }
-interface IAeresourcesArr{
+interface ICompetitiveInformation{
     ID:string;
     Title:string;
-    FileType:string;
     ModifiedBy:string;
     ModifiedOn:string;
 }

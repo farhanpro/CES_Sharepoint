@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './AeResources.module.scss';
 import type { IAeResourcesProps } from './IAeResourcesProps';
 import { SPFI, SPFx, spfi } from "@pnp/sp/presets/all";
-import { 
+import {   
   Stack,
   DetailsList,
  IColumn, 
@@ -10,6 +10,7 @@ import {
 import { IAeResourcesState } from './IAeResources.State';
 import DataServices from '../../ces/common/dataservices';
 import { FileTypeIcon, IconType, ImageSize } from "@pnp/spfx-controls-react/lib/FileTypeIcon";
+import * as moment from 'moment';
 
 
 let sp: SPFI;
@@ -20,6 +21,7 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
     this.state = {
     ID:"",
     Title:"",
+    FileType:"",
     ModifiedBy:"",
     ModifiedOn:"",
     CesArr:[]
@@ -31,7 +33,7 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
 
   async componentDidMount(): Promise<void> {
 
-    const data: { Name: any;Modified:any; ModifiedBy: any; FileRed:string;FileLeafRef:string; }[] = [];
+    const data: { Name: any;Modified:any; ModifiedBy: any; FileType: string;FileRed:string;FileLeafRef:string; }[] = [];
       //const web = Web(this.props.webURL);
       try {
         // get documents using pnp js web
@@ -42,11 +44,28 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
         internalTraning.map((element:any) => {
           // Extract file extension from the file name
           const fileName = element.File.Name;
+          const fileExtension = fileName.split('.').pop().toLowerCase();
+    
+          // Determine file type based on file extension
+          let fileType = 'Unknown';
+          if (fileExtension === 'pdf') {
+            fileType = 'PDF';
+          } 
+          else if (['docx', 'dox'].indexOf(fileExtension)) {
+            fileType = 'docx';
+          }
+          else if (['xls', 'xlsx'].indexOf(fileExtension)) {
+            fileType = 'xls';
+          } else if (['mp4', 'avi', 'mkv'].indexOf(fileExtension)) {
+            fileType = 'Video';
+          }
+          
     
           data.push({
             Name: fileName,
             Modified: element.Modified,
             ModifiedBy: element.Editor.Title,
+            FileType: fileType,
             FileLeafRef: element.FileLeafRef,
             FileRed: element.FileRef,
           });
@@ -54,15 +73,15 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
             ID: element.ID,
             Title: fileName,
             ModifiedBy:element.Editor.Title,
-       
-            ModifiedOn:element.Modified,
+            FileType: fileName,
+            ModifiedOn:moment(element.Modified).format("DD-MM-YYYY"),
             CesArr:[...this.state.CesArr,
               {
                 ID: element.ID,
             Title: fileName,
-        
+            FileType: fileName,
             ModifiedBy:element.Editor.Title,
-            ModifiedOn:element.Modified,
+            ModifiedOn:moment(element.Modified).format("DD-MM-YYYY"),
               }]
           });
         });
@@ -93,9 +112,11 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
       <Stack>
       
       <Stack className={styles.headingRow}>
-        <h4>AE Resources</h4>
+        <h4>Ae Resources</h4>
   
        
+  
+             
               <p>see all</p>
       </Stack>
         <Stack>

@@ -1,6 +1,6 @@
 @import '~@fluentui/react/dist/sass/References.scss';
 
-.customerPresentation {
+.ces {
   overflow: hidden;
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
@@ -18,6 +18,17 @@
   width: 100%;
   max-width: 420px;
 }
+
+.headingRow{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Change from 'space-around' to 'space-between' for even spacing */
+  align-items: center; /* Add this to vertically center the items */
+  height: 32px;
+ 
+  //color: white; /* Add this to change the text color to white */
+}
+
 
 .links {
   a {
