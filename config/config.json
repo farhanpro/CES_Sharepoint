@@ -33,6 +33,14 @@
           "manifest": "./src/webparts/competitveInformation/CompetitveInformationWebPart.manifest.json"
         }
       ]
+    },
+    "ces-presales-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/cesPresales/CesPresalesWebPart.js",
+          "manifest": "./src/webparts/cesPresales/CesPresalesWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -41,6 +49,7 @@
     "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
     "CustomerPresentationWebPartStrings": "lib/webparts/customerPresentation/loc/{locale}.js",
     "AeResourcesWebPartStrings": "lib/webparts/aeResources/loc/{locale}.js",
-    "CompetitveInformationWebPartStrings": "lib/webparts/competitveInformation/loc/{locale}.js"
+    "CompetitveInformationWebPartStrings": "lib/webparts/competitveInformation/loc/{locale}.js",
+    "CesPresalesWebPartStrings": "lib/webparts/cesPresales/loc/{locale}.js"
   }
 }
