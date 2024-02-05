@@ -18,7 +18,6 @@ export default class CesPresales extends React.Component<ICesPresalesProps,ICesS
     this.state = {
       ID:"",
       Title:"",
-     
       ModifiedBy:"",
       ModifiedOn:"",
       CesArr:[]

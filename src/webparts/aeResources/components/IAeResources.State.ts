@@ -5,6 +5,8 @@ export interface IAeResourcesState{
     ModifiedOn:string;
     FileType:string;
     CesArr:IAeresourcesArr[];
+    CPArr:IAeresourcesArr[];
+    CTInfoArr:IAeresourcesArr[];
 }
 interface IAeresourcesArr{
     ID:string;

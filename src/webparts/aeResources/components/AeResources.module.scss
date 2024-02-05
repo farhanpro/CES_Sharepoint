@@ -29,7 +29,13 @@
   //color: white; /* Add this to change the text color to white */
 }
 
-
+.tempCss {
+  box-shadow: 0px 0px 6px #CBCBCB;
+  border-radius: 4px;
+  width: 640px;
+  height: 338px;
+  padding: 20px;
+}
 .links {
   a {
     text-decoration: none;
