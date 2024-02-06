@@ -10,14 +10,24 @@
   }
 }
 
-.headingText{
-  font-family: Segoe UI, Semibold;
-  size: 20px;
-  align-items: left;
-  color: #323130;
+.headingText {
+  font: normal normal 600 20px/40px 'Segoe UI';
+  letter-spacing: 0px;
+  text-align: left;
+  color: var(--323130-out-of-box-text-color, #323130);
   opacity: 1;
+}
+
+.seeAll{
+  background-color: #FFFFFF;
+  color:#7E45AF;
+  opacity: 1;
+  letter-spacing: 0px;
+  text-align: center;
+  border-color: #FFFFFF;
 
 }
+
 
 .welcome {
   text-align: center;
