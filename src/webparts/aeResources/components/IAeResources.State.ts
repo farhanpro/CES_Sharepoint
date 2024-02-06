@@ -7,6 +7,7 @@ export interface IAeResourcesState{
     CesArr:IAeresourcesArr[];
     CPArr:IAeresourcesArr[];
     CTInfoArr:IAeresourcesArr[];
+    ITArr:IAeresourcesArr[];
 }
 interface IAeresourcesArr{
     ID:string;

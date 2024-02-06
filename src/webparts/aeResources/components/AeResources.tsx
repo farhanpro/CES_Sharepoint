@@ -6,7 +6,9 @@ import {
   Stack,
   DetailsList,
   IColumn, 
-  DetailsListLayoutMode} from '@fluentui/react';
+  DetailsListLayoutMode,
+  PrimaryButton,
+  Icon} from '@fluentui/react';
 import { IAeResourcesState } from './IAeResources.State';
 import DataServices from '../../ces/common/dataservices';
 import { FileTypeIcon, IconType, ImageSize } from "@pnp/spfx-controls-react/lib/FileTypeIcon";
@@ -27,6 +29,7 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
       CesArr:[],
       CPArr:[],
       CTInfoArr:[],
+      ITArr:[],
 
     }
     sp = spfi().using(SPFx(this.props.spcontext));
@@ -105,6 +108,28 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
             }]
         });
       })
+
+      //Internal tranings
+      const it = await commonService.getItems('Internal Tranings'); 
+      console.log("Internal Training..", it);
+      await it.map((element:any) => {
+        const fileName = element.File.Name;
+        this.setState({
+          ID: element.ID,
+          Title: fileName,
+          ModifiedBy:element.Editor.Title,
+          FileType: "",
+          ModifiedOn:moment(element.Modified).format("DD-MM-YYYY"),
+          ITArr:[...this.state.ITArr,
+            {
+              ID: element.ID,
+              Title: fileName,
+              FileType: "",
+              ModifiedBy:element.Editor.Title,
+              ModifiedOn:moment(element.Modified).format("DD-MM-YYYY"),
+            }]
+        });
+      })
     
 
     } catch (error) {
@@ -130,10 +155,21 @@ export default class AeResources extends React.Component<IAeResourcesProps,IAeRe
 
         <Stack  className={styles.tempCss} >
           <Stack className={styles.headingRow}>
-            <h4>Ae Resources</h4> <p>see all</p>
+          <h4>Internal traning</h4>
+          <Stack style={{display:"flex",flexDirection:"row",justifyContent:"space-between",width:"180px"}}>
+      <Icon
+              iconName="CloudUpload"
+              aria-label="Add Online Event Icon"
+              style={{ fontSize: "20px" , color:"#646E81", }}
+            />
+            <span>Drag and drop files here</span>
+      </Stack>
+   
+            <PrimaryButton style={{width:"132px",height:"32px",borderRadius:"4px"}}>Create folder</PrimaryButton>
+            <p>see all</p>
           </Stack>
           <DetailsList 
-            items={this.state.CesArr}
+            items={this.state.ITArr}
             columns={[
               { key: 'FileType', name: 'File Type', fieldName: 'FileType', minWidth: 10, maxWidth: 50, isResizable: true, onRender: this.renderFileTypeIcon },
               { key: 'Title', name: 'Title', fieldName: 'Title', minWidth: 50, maxWidth: 100, isResizable: true },
