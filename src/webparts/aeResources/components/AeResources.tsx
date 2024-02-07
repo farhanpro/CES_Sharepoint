@@ -12,6 +12,7 @@ import {
   Icon,
   Modal,
   CheckboxVisibility,
+  DefaultButton,
 } from "@fluentui/react";
 import { IAeResourcesState } from "./IAeResources.State";
 import DataServices from "../../ces/common/dataservices";
@@ -231,7 +232,7 @@ export default class AeResources extends React.Component<
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
-      <Stack>
+     <section>
         <Stack horizontal style={{ marginTop: "15px" }}>
           <Stack className={styles.tempCss}>
             <Stack className={styles.headingRow}>
@@ -241,20 +242,21 @@ export default class AeResources extends React.Component<
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  alignItems: "center",
                   width: "180px",
                 }}
               >
                 <Icon
                   iconName="CloudUpload"
                   aria-label="Add Online Event Icon"
-                  style={{ fontSize: "20px", color: "#646E81" }}
+                  style={{ fontSize: "15px", color: "#646E81" }}
                 />
-                <span>Drag and drop files here</span>
+                <DefaultButton style={{backgroundColor:"#FFFFFF", color: "#646E81" ,borderColor:"#FFFFFF",padding:0}} onClick={() => {this.setState({IsAdd:true})}}>Drag and drop files here</DefaultButton>
               </Stack>
 
               <PrimaryButton
                 style={{
-                  width: "132px",
+                  width: "100px",
                   height: "32px",
                   borderRadius: "4px",
                   backgroundColor: "#5A2A82",
@@ -307,6 +309,7 @@ export default class AeResources extends React.Component<
               layoutMode={DetailsListLayoutMode.justified}
               selectionPreservedOnEmptyClick={true}
               checkboxVisibility={CheckboxVisibility.hidden}
+              
             />
             </Stack>
           </Stack>
@@ -315,18 +318,18 @@ export default class AeResources extends React.Component<
           isOpen={this.state.IsAdd}
           onDismiss={() => this.setState({ IsAdd: false })}
           isBlocking={false}
-            styles={{ main: { maxWidth: 450 } }}
-        //  styles={{ main: { width: "50%", height: "85%" } }}
+            //styles={{ main: { maxWidth: 450 } }}
+          styles={{ main: { width: "50%", height: "30%" } }}
           >
             
           <Dropzone onDrop={(files) => this.handleFileUpload(files)}>
                 {({ getRootProps, getInputProps }) => (
-                  <Stack>
+                  <Stack  className={styles.dragDropFile}>
                     <Stack
                       {...getRootProps({
                         onDrop: (event) => event.stopPropagation(),
                       })}
-                      
+                      className={styles.inputSection}
                     >
                       <input
                         {...getInputProps()}
@@ -344,7 +347,7 @@ export default class AeResources extends React.Component<
                       />
                       <p>Drag and Drop files here, Or click to select files</p>
                       <div>
-                        <PrimaryButton >
+                        <PrimaryButton className={styles.chooseBtn}>
                           Choose File
                         </PrimaryButton>
                       </div>
@@ -382,6 +385,7 @@ export default class AeResources extends React.Component<
                   </Stack>
                 )}
               </Dropzone>
+            
           </Modal>
 
           <Stack className={styles.tempCss} style={{ marginLeft: "15px" }}>
@@ -389,6 +393,7 @@ export default class AeResources extends React.Component<
               <Text className={styles.headingText}>Customer Presentations</Text>
               <PrimaryButton className={styles.seeAll}>See all</PrimaryButton>
             </Stack>
+            <Stack  style={{overflowY: 'auto'}}>
             <DetailsList
               items={this.state.CPArr}
               columns={[
@@ -431,6 +436,7 @@ export default class AeResources extends React.Component<
               selectionPreservedOnEmptyClick={true}
               checkboxVisibility={CheckboxVisibility.hidden}
             />
+            </Stack>
           </Stack>
         </Stack>
 
@@ -534,8 +540,9 @@ export default class AeResources extends React.Component<
               checkboxVisibility={CheckboxVisibility.hidden}
             />
           </Stack>
+
         </Stack>
-      </Stack>
+  </section>
     );
   }
 }

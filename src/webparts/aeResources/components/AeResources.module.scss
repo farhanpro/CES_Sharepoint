@@ -51,9 +51,10 @@
 .tempCss {
   box-shadow: 0px 0px 6px #CBCBCB;
   border-radius: 4px;
-  width: 640px;
+  width: 49%;
   height: 338px;
   padding: 20px;
+ position: unset;
 }
 .links {
   a {
@@ -67,4 +68,47 @@
       color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
     }
   }
+}
+
+//Dropzone css
+
+.dragDropFile{
+  width: 100%;
+ border: 2px dashed  #5a2a82; // Add border to the entire drop zone
+ padding: 20px, // Add padding for spacing
+}
+.defaultButton{
+padding: 10px;
+display: flex;
+flex-direction: row;
+justify-content: right;// Space between Edit and Cancel
+//width: 90%;// Take up the full width
+}
+.inputSection{
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center; // Center items horizontally
+
+}
+.iconButton {
+ max-height: 2rem;
+ 
+color: #5A2A82;
+// background-color: #ffffff;
+padding: 5px;
+margin-left: 7px;
+// box-shadow: 0 0 5px #5A2A82;
+//transition: all 0.3s; /* Adjust the duration as needed */
+}
+.chooseBtn{
+padding: 10px;
+background-color:#5A2A82;
+}
+.cancelBtn{
+padding: 10px;
+margin-right: 10px;
+color: #5A2A82;
+border-color: #5A2A82;
+
 }
