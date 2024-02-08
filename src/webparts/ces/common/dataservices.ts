@@ -1,10 +1,6 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import {SPFI,SPFx,spfi} from "@pnp/sp/presets/all";
-import {
-    FileTypeIcon,
-    IconType,
-    ImageSize,
-  } from "@pnp/spfx-controls-react/lib/FileTypeIcon";
+
 
 let sp:SPFI;
 export default class DataServices{

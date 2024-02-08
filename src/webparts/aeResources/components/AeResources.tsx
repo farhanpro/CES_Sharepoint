@@ -15,6 +15,8 @@ import {
   DefaultButton,
   IconButton,
   StackItem,
+  // IStackTokens,
+
 } from "@fluentui/react";
 import { IAeResourcesState } from "./IAeResources.State";
 import DataServices from "../../ces/common/dataservices";
@@ -26,10 +28,18 @@ import {
 import Dropzone from "react-dropzone";
 import * as moment from "moment";
 import Constants from "../../ces/common/constants";
+import { Dropdown, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 
 let sp: SPFI;
 let commonService: any = null;
 // let items: any = null;
+const dropdownStyles: Partial<IDropdownStyles> = {
+  dropdown: { width: 300 },
+};
+
+let options: IDropdownOption[] = [];
+
+// const stackTokens: IStackTokens = { childrenGap: 20 };
 
 export default class AeResources extends React.Component<
   IAeResourcesProps,
@@ -66,6 +76,7 @@ export default class AeResources extends React.Component<
     };
     sp = spfi().using(SPFx(this.props.spcontext));
     console.log("Sp installed", sp);
+   
 
     this.onDrop = (files) => {
       this.setState({ Image: files });
@@ -84,23 +95,25 @@ export default class AeResources extends React.Component<
       // Mapping data
       await aeResources.map((element: any) => {
         const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
         this.setState({
           ID: element.ID,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
-          FileType: "",
+          FileType: fileExtention,
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           CesArr: [
             ...this.state.CesArr,
             {
               ID: element.ID,
               Title: fileName,
-              FileType: "",
+              FileType: fileExtention,
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
             },
           ],
         });
+        options.push({ key: fileExtention, text: fileExtention });
       });
 
       // CP Resources
@@ -186,7 +199,7 @@ export default class AeResources extends React.Component<
     column: IColumn
   ): JSX.Element => {
     const fileTypeIconProps = {
-      type: IconType.font,
+      type: IconType.image,
       path: item.Title,
       size: ImageSize.small,
     };
@@ -243,13 +256,28 @@ export default class AeResources extends React.Component<
     this.setState({ uploadedFileName: _file.path });
   };
 
+  handleFileType = async ()=>{
 
+  }
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
      <section>
+        
+        <Dropdown
+  placeholder="Select"
+  label="Filter type"
+  options={options}
+  styles={dropdownStyles}
+  onChange={(e:any,selection:any) => {  console.log("This is the selected key",selection.key)  }
+  }
+
+/>
         <Stack horizontal style={{ marginTop: "15px" }}>
+       
+     
           <Stack className={styles.tempCss}>
+    
             <Stack className={styles.headingRow}>
               <Text className={styles.headingText}>Internal traning</Text>
               <Stack
@@ -335,7 +363,7 @@ export default class AeResources extends React.Component<
           onDismiss={() => this.setState({ IsAdd: false })}
           isBlocking={false}
             //styles={{ main: { maxWidth: 450 } }}
-          styles={{ main: { width: "50%", height: "30%" } }}
+          styles={{ main: { width: "60%", height: "50%" } }}
           >
             
             <Stack horizontal className={`${styles.headingStyle}`}>
@@ -495,6 +523,7 @@ export default class AeResources extends React.Component<
               <Text className={styles.headingText}>Ae Resources</Text>
               <PrimaryButton className={styles.seeAll}>See all</PrimaryButton>
             </Stack>
+            <Stack style={{overflowY:"auto"}}>
             <DetailsList
               items={this.state.CesArr}
               columns={[
@@ -539,6 +568,7 @@ export default class AeResources extends React.Component<
               checkboxVisibility={CheckboxVisibility.hidden}
             />
           </Stack>
+          </Stack>
 
           <Stack className={styles.tempCss} style={{ marginLeft: "15px" }}>
             <Stack className={styles.headingRow}>
@@ -547,6 +577,7 @@ export default class AeResources extends React.Component<
               </Text>
               <PrimaryButton className={styles.seeAll}>See all</PrimaryButton>
             </Stack>
+            <Stack style={{overflowY:"auto"}}>
             <DetailsList
               items={this.state.CTInfoArr}
               columns={[
@@ -591,6 +622,7 @@ export default class AeResources extends React.Component<
               selectionPreservedOnEmptyClick={true}
               checkboxVisibility={CheckboxVisibility.hidden}
             />
+          </Stack>
           </Stack>
 
         </Stack>
