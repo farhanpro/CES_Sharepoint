@@ -13,6 +13,8 @@ import {
   Modal,
   CheckboxVisibility,
   DefaultButton,
+  IconButton,
+  StackItem,
 } from "@fluentui/react";
 import { IAeResourcesState } from "./IAeResources.State";
 import DataServices from "../../ces/common/dataservices";
@@ -23,6 +25,7 @@ import {
 } from "@pnp/spfx-controls-react/lib/FileTypeIcon";
 import Dropzone from "react-dropzone";
 import * as moment from "moment";
+import Constants from "../../ces/common/constants";
 
 let sp: SPFI;
 let commonService: any = null;
@@ -43,7 +46,6 @@ export default class AeResources extends React.Component<
       ModifiedBy: "",
       ModifiedOn: "",
       IsAdd:false,
-
       titleError: "",
       fileError : "",
       dialogMessage : "",
@@ -56,7 +58,7 @@ export default class AeResources extends React.Component<
       uploadedFile : [],
       itemId: 0,
       errorMessage : "",
-
+      
       CesArr: [],
       CPArr: [],
       CTInfoArr: [],
@@ -76,7 +78,7 @@ export default class AeResources extends React.Component<
     // const data: { Name: any;Modified:any; ModifiedBy: any; FileType: string;FileRed:string;FileLeafRef:string; }[] = [];
     try {
       // get documents using pnp js web
-      const aeResources = await commonService.getItems("AE Resources");
+      const aeResources = await commonService.getItems(Constants.LIST_NAMES.AE_RESOURCES);
       console.log(aeResources);
 
       // Mapping data
@@ -102,7 +104,7 @@ export default class AeResources extends React.Component<
       });
 
       // CP Resources
-      const cpResources = await commonService.getItems("Customer Presentation");
+      const cpResources = await commonService.getItems(Constants.LIST_NAMES.CUSTOMER_PRESENTATION);
       console.log("CP Resources..", cpResources);
 
       await cpResources.map((element: any) => {
@@ -127,7 +129,7 @@ export default class AeResources extends React.Component<
       });
 
       //Competitive Information
-      const ctInfo = await commonService.getItems("Competitive Information");
+      const ctInfo = await commonService.getItems(Constants.LIST_NAMES.COMPETITIVE_INFORMATION);
       console.log("Competitive Information..", ctInfo);
       await ctInfo.map((element: any) => {
         const fileName = element.File.Name;
@@ -151,7 +153,7 @@ export default class AeResources extends React.Component<
       });
 
       //Internal tranings
-      const it = await commonService.getItems("Internal Tranings");
+      const it = await commonService.getItems(Constants.LIST_NAMES.INTERNAL_TRANINGS);
       console.log("Internal Training..", it);
       await it.map((element: any) => {
         const fileName = element.File.Name;
@@ -184,7 +186,7 @@ export default class AeResources extends React.Component<
     column: IColumn
   ): JSX.Element => {
     const fileTypeIconProps = {
-      type: IconType.image,
+      type: IconType.font,
       path: item.Title,
       size: ImageSize.small,
     };
@@ -192,15 +194,25 @@ export default class AeResources extends React.Component<
     return <FileTypeIcon {...fileTypeIconProps} />;
   };
 
-  public handleFileUpload = async (_files: any) => {
+  
+
+  handleFileDrop = (files: any[]) => {
+    const file = files[0];
+    this.setState({ file: file, uploadedFileName: file.name });
+  };
+
+  public handleFileUpload = async () => {
+    const _files = this.state.file;
     console.log("Files to be stored here := ", _files);
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
     if (_files.length === 0) {
       alert("No files were selected.");
       return;
     }
-    const _file = _files[0];
-    this.setState({ file: _file[0] });
+    const _file = _files;
+    this.setState({ file: _file, uploadedFileName:_files.name});
+    
+    
     // const _listName = "BannerImage";
     const _folderPath = "/sites/FrahanTest/Internal Tranings";
     if (_file) {
@@ -212,7 +224,8 @@ export default class AeResources extends React.Component<
           const _fileId = response.data.UniqueId;
           this.setState({ fieldId: _fileId });
           const imageUrl = response.data.ServerRelativeUrl;
-          this.setState({ uploadedFile: imageUrl });
+          this.setState({ uploadedFile: imageUrl,IsAdd:false ,ITArr:[]});
+          this.componentDidMount();
           console.log("Image Url", imageUrl);
 
 
@@ -229,6 +242,8 @@ export default class AeResources extends React.Component<
     this.setState({ itemId: _file.itemId });
     this.setState({ uploadedFileName: _file.path });
   };
+
+
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
@@ -273,7 +288,7 @@ export default class AeResources extends React.Component<
               columns={[
                 {
                   key: "FileType",
-                  name: "File Type",
+                  name:  "File Type",
                   fieldName: "FileType",
                   minWidth: 20,
                   maxWidth: 50,
@@ -287,6 +302,7 @@ export default class AeResources extends React.Component<
                   minWidth: 50,
                   maxWidth: 100,
                   isResizable: true,
+                  onRender:(items)=>{return <Stack> <Text className={styles.insideText}>{items.Title}</Text> <StackItem className={styles.descriptionText}><span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid animi voluptatibus quam earum iusto consequuntur quis quaerat eum quos. Veniam non porro nemo corrupti explicabo, totam ex sequi unde fugit?</span></StackItem></Stack>} 
                 },
                 {
                   key: "ModifiedOn",
@@ -322,70 +338,101 @@ export default class AeResources extends React.Component<
           styles={{ main: { width: "50%", height: "30%" } }}
           >
             
-          <Dropzone onDrop={(files) => this.handleFileUpload(files)}>
-                {({ getRootProps, getInputProps }) => (
-                  <Stack  className={styles.dragDropFile}>
-                    <Stack
-                      {...getRootProps({
-                        onDrop: (event) => event.stopPropagation(),
-                      })}
-                      className={styles.inputSection}
-                    >
-                      <input
-                        {...getInputProps()}
-                        placeholder="No File Chosen"
-                        required
-                        //style={{ display: "none" }} // Hide the default input style
-                      />
-                      <Icon
-                        iconName="CloudUpload"
-                        style={{
-                          fontSize: "38px",
-                          color: "#5A2A82",
-                          marginBottom: "10px", // Adjust spacing as needed
-                        }}
-                      />
-                      <p>Drag and Drop files here, Or click to select files</p>
-                      <div>
-                        <PrimaryButton className={styles.chooseBtn}>
-                          Choose File
-                        </PrimaryButton>
-                      </div>
-                      <p>
-                        {this.state.uploadedFileName
-                          ? ""
-                          : this.state.uploadedFileError
-                          ? ""
-                          : this.state.fileError}
-                      </p>
-                    </Stack>
-                    {this.state.uploadedFileName && (
-                      <Stack
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginRight: "60px",
-                        }}
-                      >
-                        <Icon
-                          iconName="Document"
-                          style={{
-                            marginRight: "8px",
-                            fontSize: "20px",
-                            color: "#5A2A82",
-                            marginLeft: "10%",
-                            marginTop: "5px",
-                          }}
-                        />
-                        <span>{this.state.uploadedFileName}</span>
+            <Stack horizontal className={`${styles.headingStyle}`}>
+              <Text variant={"xLarge"} className={`${styles.popupHeadingText}`}>
+                Add File
+              </Text>
+
+              <IconButton
+                iconProps={{ iconName: "Cancel" }}
+                className={`${styles.cancelBtn}`}
+                title="Cancel"
+                ariaLabel="Cancel"
+                onClick={() => {
+                  this.setState({ IsAdd: false });
+                }}
+                style={{
+                  fontSize: "50px",
+                  color:"#2E3B4E",
+                  opacity: "1",
+                  marginRight:"10px",
+                  marginTop:"10px"
+                  // Adjust spacing as needed
+                }}
+              />
+            </Stack>
+
+            <Dropzone onDrop={(files) => this.handleFileDrop(files)}>
+                    {({ getRootProps, getInputProps }) => (
+                      <Stack className={styles.dragDropFile}>
+                        <Stack
+                          {...getRootProps({
+                            onDrop: (event) => event.stopPropagation()
+                          })}
+                          className={styles.inputSection}
+                        >
+                          <input
+                            {...getInputProps()}
+                            placeholder="No File Chosen"
+                            required
+                          />
+                          <Icon
+                            iconName="CloudUpload"
+                            style={{
+                              fontSize: "38px",
+                              color: "#5A2A82",
+                              marginBottom: "10px",
+                            }}
+                          />
+                          <p>Drag and drop files here, or click to select files</p>
+                          <div>
+                          </div>
+                          <p>
+                            {this.state.uploadedFileName
+                              ? ""
+                              : this.state.uploadedFileError
+                              ? ""
+                              : this.state.fileError}
+                          </p>
+                        </Stack>
+                        {this.state.uploadedFileName && (
+                          <Stack
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              marginRight: "60px",
+                            }}
+                          >
+                            <Icon
+                              iconName="Document"
+                              style={{
+                                marginRight: "8px",
+                                fontSize: "20px",
+                                color: "#5A2A82",
+                                marginLeft: "10%",
+                                marginTop: "5px",
+                              }}
+                            />
+                            <span>{this.state.uploadedFileName}</span>
+                          </Stack>
+                        )}
                       </Stack>
                     )}
-                  </Stack>
-                )}
-              </Dropzone>
-            
+                </Dropzone>
+          
+       
+                <Stack className={styles.footerContent}>
+                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>
+  Upload
+</PrimaryButton>
+
+  <PrimaryButton className={`${styles.seeAll} ${styles.standardButton}`} onClick={()=>{this.setState({IsAdd:false})}}>
+    Cancel
+  </PrimaryButton>
+</Stack>
+
           </Modal>
 
           <Stack className={styles.tempCss} style={{ marginLeft: "15px" }}>
@@ -396,6 +443,7 @@ export default class AeResources extends React.Component<
             <Stack  style={{overflowY: 'auto'}}>
             <DetailsList
               items={this.state.CPArr}
+             
               columns={[
                 {
                   key: "FileType",
@@ -413,6 +461,7 @@ export default class AeResources extends React.Component<
                   minWidth: 50,
                   maxWidth: 100,
                   isResizable: true,
+                  onRender:(items)=>{return <Stack> <Text className={styles.insideText}>{items.Title}</Text> <StackItem><span className={styles.descriptionText}> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid animi voluptatibus quam earum iusto consequuntur quis quaerat eum quos. Veniam non porro nemo corrupti explicabo, totam ex sequi unde fugit?</span></StackItem></Stack>}
                 },
                 {
                   key: "ModifiedOn",
@@ -465,6 +514,7 @@ export default class AeResources extends React.Component<
                   minWidth: 50,
                   maxWidth: 100,
                   isResizable: true,
+                  onRender:(items)=>{return <Stack> <Text className={styles.insideText}>{items.Title}</Text> <StackItem><span className={styles.descriptionText}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid animi voluptatibus quam earum iusto consequuntur quis quaerat eum quos. Veniam non porro nemo corrupti explicabo, totam ex sequi unde fugit?</span></StackItem></Stack>}
                 },
                 {
                   key: "ModifiedOn",
@@ -516,6 +566,7 @@ export default class AeResources extends React.Component<
                   minWidth: 50,
                   maxWidth: 100,
                   isResizable: true,
+                  onRender:(items)=>{return <Stack> <Text className={styles.insideText}>{items.Title}</Text> <StackItem><span className={styles.descriptionText}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid animi voluptatibus quam earum iusto consequuntur quis quaerat eum quos. Veniam non porro nemo corrupti explicabo, totam ex sequi unde fugit?</span></StackItem></Stack>}
                 },
                 {
                   key: "ModifiedOn",
@@ -536,6 +587,7 @@ export default class AeResources extends React.Component<
               ]}
               setKey="set"
               layoutMode={DetailsListLayoutMode.justified}
+           
               selectionPreservedOnEmptyClick={true}
               checkboxVisibility={CheckboxVisibility.hidden}
             />

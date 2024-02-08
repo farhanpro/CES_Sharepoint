@@ -25,9 +25,58 @@
   letter-spacing: 0px;
   text-align: center;
   border-color: #FFFFFF;
-
 }
 
+.footerContent{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-top: 10px;
+}
+
+.headingStyle {
+  background-color: #FFF;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: sticky;
+  margin-bottom: 10px;
+}
+
+.insideText{
+  color: var(---323130-out-of-box-text-color);
+text-align: left;
+font: normal normal 600 14px/28px Segoe UI;
+letter-spacing: 0px;
+color: #323130;
+opacity: 1;
+
+}
+.descriptionText{
+  color: var(---323130-out-of-box-text-color);
+text-align: left;
+font: normal normal normal 12px/28px Segoe UI;
+letter-spacing: 0px;
+color: #323130;
+opacity: 1;
+}
+.popupHeadingText {
+  color: #5A2D83;
+  margin-top: 20px;
+  margin-left: 20px;
+  display: inline-block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  width: 50% !important;
+ 
+}
+
+.standardButton {
+  width: 30px;
+  margin-right: 10px; /* Adjust margin as needed */
+  border-color: #7E45AF;
+}
 
 .welcome {
   text-align: center;

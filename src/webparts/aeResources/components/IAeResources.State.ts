@@ -15,7 +15,7 @@ export interface IAeResourcesState{
     bgError : string;
     uploadedFileName : string;
     uploadedFileError:string;
-    file :[];
+    file :any;
     fieldId : string;
     uploadedFile : any;
     itemId: number;
