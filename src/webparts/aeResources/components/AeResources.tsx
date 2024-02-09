@@ -256,23 +256,55 @@ export default class AeResources extends React.Component<
     this.setState({ uploadedFileName: _file.path });
   };
 
-  handleFileType = async ()=>{
+  handleFileType = async (e: any, selection: any) => {
+  
+    console.log(selection.key);
+    console.log("This is CesArr", this.state.CesArr);
 
-  }
+    const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
+  
+      if (item.FileType === selection.key) {
+            acc.push(item);
+        }
+        return acc;
+    }, []);
+    this.setState({ CesArr: filteredArr });
+    console.log("Filtered Array", filteredArr);
+}
+
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
      <section>
-        
+        <Stack className={styles.dropdownStack}>
         <Dropdown
+  placeholder="Select"
+  label="Product Group"
+  options={options}
+  styles={dropdownStyles}
+  onChange={()=>{this.handleFileType}}
+/>
+        <Dropdown
+  placeholder="Select"
+  label="Application"
+  options={options}
+  styles={dropdownStyles}
+  onChange={()=>{this.handleFileType}}
+/>
+        <Dropdown
+        
   placeholder="Select"
   label="Filter type"
   options={options}
-  styles={dropdownStyles}
-  onChange={(e:any,selection:any) => {  console.log("This is the selected key",selection.key)  }
-  }
-
+  styles={{ 
+    dropdown: { 
+      width: '200px' // Adjust the width as needed
+    },
+    ...dropdownStyles // If you have additional styles, spread them here
+  }}
+  onChange={()=>{this.handleFileType}}
 />
+</Stack>
         <Stack horizontal style={{ marginTop: "15px" }}>
        
      

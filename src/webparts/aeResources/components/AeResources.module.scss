@@ -34,6 +34,13 @@
   margin-top: 10px;
 }
 
+.dropdownStack{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: sticky;
+  width: 50%;
+}
 .headingStyle {
   background-color: #FFF;
   display: flex;
