@@ -34,7 +34,7 @@ let sp: SPFI;
 let commonService: any = null;
 // let items: any = null;
 const dropdownStyles: Partial<IDropdownStyles> = {
-  dropdown: { width: 300 },
+  dropdown: { width: 110 },
 };
 
 let options: IDropdownOption[] = [];
@@ -75,7 +75,7 @@ export default class AeResources extends React.Component<
       ITArr: [],
     };
     sp = spfi().using(SPFx(this.props.spcontext));
-    console.log("Sp installed", sp);
+    //console.log("Sp installed", sp);
    
 
     this.onDrop = (files) => {
@@ -143,7 +143,7 @@ export default class AeResources extends React.Component<
 
       //Competitive Information
       const ctInfo = await commonService.getItems(Constants.LIST_NAMES.COMPETITIVE_INFORMATION);
-      console.log("Competitive Information..", ctInfo);
+      //console.log("Competitive Information..", ctInfo);
       await ctInfo.map((element: any) => {
         const fileName = element.File.Name;
         this.setState({
@@ -167,7 +167,7 @@ export default class AeResources extends React.Component<
 
       //Internal tranings
       const it = await commonService.getItems(Constants.LIST_NAMES.INTERNAL_TRANINGS);
-      console.log("Internal Training..", it);
+      //console.log("Internal Training..", it);
       await it.map((element: any) => {
         const fileName = element.File.Name;
         this.setState({
@@ -189,7 +189,7 @@ export default class AeResources extends React.Component<
         });
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
@@ -216,7 +216,7 @@ export default class AeResources extends React.Component<
 
   public handleFileUpload = async () => {
     const _files = this.state.file;
-    console.log("Files to be stored here := ", _files);
+    //console.log("Files to be stored here := ", _files);
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
     if (_files.length === 0) {
       alert("No files were selected.");
@@ -233,13 +233,13 @@ export default class AeResources extends React.Component<
         .getFolderByServerRelativePath(_folderPath)
         .files.addUsingPath(_file.name, _file, { Overwrite: true })
         .then(async (response: any) => {
-          console.log(response);
+          //console.log(response);
           const _fileId = response.data.UniqueId;
           this.setState({ fieldId: _fileId });
           const imageUrl = response.data.ServerRelativeUrl;
           this.setState({ uploadedFile: imageUrl,IsAdd:false ,ITArr:[]});
           this.componentDidMount();
-          console.log("Image Url", imageUrl);
+          //console.log("Image Url", imageUrl);
 
 
           // this.addItem(imageUrl);
@@ -258,8 +258,8 @@ export default class AeResources extends React.Component<
 
   handleFileType = async (e: any, selection: any) => {
   
-    console.log(selection.key);
-    console.log("This is CesArr", this.state.CesArr);
+ //   console.log(selection.key);
+  //  console.log("This is CesArr", this.state.CesArr);
 
     const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
   
@@ -269,7 +269,7 @@ export default class AeResources extends React.Component<
         return acc;
     }, []);
     this.setState({ CesArr: filteredArr });
-    console.log("Filtered Array", filteredArr);
+   // console.log("Filtered Array", filteredArr);
 }
 
 
