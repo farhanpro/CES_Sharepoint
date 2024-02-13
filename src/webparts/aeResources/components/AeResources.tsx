@@ -34,7 +34,7 @@ let sp: SPFI;
 let commonService: any = null;
 // let items: any = null;
 const dropdownStyles: Partial<IDropdownStyles> = {
-  dropdown: { width: 110 },
+  dropdown: { width: 160 ,borderRadius:4},
 };
 
 let options: IDropdownOption[] = [];
@@ -56,6 +56,9 @@ export default class AeResources extends React.Component<
       ModifiedBy: "",
       ModifiedOn: "",
       IsAdd:false,
+      productGroup:"",
+
+      
       titleError: "",
       fileError : "",
       dialogMessage : "",
@@ -90,7 +93,10 @@ export default class AeResources extends React.Component<
     try {
       // get documents using pnp js web
       const aeResources = await commonService.getItems(Constants.LIST_NAMES.AE_RESOURCES);
-      console.log(aeResources);
+     //const simple = await commonService.simple(Constants.LIST_NAMES.AE_RESOURCES);
+     
+     //console.log("Ae Resources Simple data",simple);
+      console.log("Here is AE resources",aeResources);
 
       // Mapping data
       await aeResources.map((element: any) => {
@@ -102,6 +108,7 @@ export default class AeResources extends React.Component<
           ModifiedBy: element.Editor.Title,
           FileType: fileExtention,
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+          productGroup:element.Productgroup,
           CesArr: [
             ...this.state.CesArr,
             {
@@ -110,6 +117,7 @@ export default class AeResources extends React.Component<
               FileType: fileExtention,
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup:element.Productgroup
             },
           ],
         });
@@ -118,7 +126,7 @@ export default class AeResources extends React.Component<
 
       // CP Resources
       const cpResources = await commonService.getItems(Constants.LIST_NAMES.CUSTOMER_PRESENTATION);
-      console.log("CP Resources..", cpResources);
+      console.log("Customer presentation", cpResources);
 
       await cpResources.map((element: any) => {
         const fileName = element.File.Name;
@@ -128,6 +136,7 @@ export default class AeResources extends React.Component<
           ModifiedBy: element.Editor.Title,
           FileType: "",
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+          productGroup:element.Productgroup,
           CPArr: [
             ...this.state.CPArr,
             {
@@ -136,6 +145,7 @@ export default class AeResources extends React.Component<
               FileType: "",
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup:element.Productgroup
             },
           ],
         });
@@ -143,7 +153,7 @@ export default class AeResources extends React.Component<
 
       //Competitive Information
       const ctInfo = await commonService.getItems(Constants.LIST_NAMES.COMPETITIVE_INFORMATION);
-      //console.log("Competitive Information..", ctInfo);
+      console.log("Competitive Information..", ctInfo);
       await ctInfo.map((element: any) => {
         const fileName = element.File.Name;
         this.setState({
@@ -152,6 +162,7 @@ export default class AeResources extends React.Component<
           ModifiedBy: element.Editor.Title,
           FileType: "",
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+          productGroup:element.Productgroup,
           CTInfoArr: [
             ...this.state.CTInfoArr,
             {
@@ -160,6 +171,7 @@ export default class AeResources extends React.Component<
               FileType: "",
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup:element.Productgroup
             },
           ],
         });
@@ -167,7 +179,7 @@ export default class AeResources extends React.Component<
 
       //Internal tranings
       const it = await commonService.getItems(Constants.LIST_NAMES.INTERNAL_TRANINGS);
-      //console.log("Internal Training..", it);
+      console.log("Internal Training..", it);
       await it.map((element: any) => {
         const fileName = element.File.Name;
         this.setState({
@@ -176,6 +188,7 @@ export default class AeResources extends React.Component<
           ModifiedBy: element.Editor.Title,
           FileType: "",
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+          productGroup:element.Productgroup,
           ITArr: [
             ...this.state.ITArr,
             {
@@ -184,6 +197,7 @@ export default class AeResources extends React.Component<
               FileType: "",
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup:element.Productgroup
             },
           ],
         });
@@ -199,6 +213,7 @@ export default class AeResources extends React.Component<
     column: IColumn
   ): JSX.Element => {
     const fileTypeIconProps = {
+     
       type: IconType.image,
       path: item.Title,
       size: ImageSize.small,
@@ -348,7 +363,20 @@ export default class AeResources extends React.Component<
               columns={[
                 {
                   key: "FileType",
-                  name:  "File Type",
+                  name: (
+                    <Stack
+                      horizontal
+                      horizontalAlign="center"
+                      
+                    >
+                     
+                      
+                        <Icon
+                          iconName={"Page"}
+                        ></Icon>
+                      </Stack>
+                    
+                  ) as any,
                   fieldName: "FileType",
                   minWidth: 20,
                   maxWidth: 50,
@@ -507,7 +535,18 @@ export default class AeResources extends React.Component<
               columns={[
                 {
                   key: "FileType",
-                  name: "File Type",
+                  name: (
+                    <Stack
+                      horizontal
+                      horizontalAlign="center"
+                      
+                    >
+                        <Icon
+                          iconName={"Page"}
+                        ></Icon>
+                      </Stack>
+                    
+                  ) as any,
                   fieldName: "FileType",
                   minWidth: 20,
                   maxWidth: 50,
@@ -561,7 +600,20 @@ export default class AeResources extends React.Component<
               columns={[
                 {
                   key: "FileType",
-                  name: "File Type",
+                  name: (
+                    <Stack
+                      horizontal
+                      horizontalAlign="center"
+                      
+                    >
+                     
+                      
+                        <Icon
+                          iconName={"Page"}
+                        ></Icon>
+                      </Stack>
+                    
+                  ) as any,
                   fieldName: "FileType",
                   minWidth: 20,
                   maxWidth: 50,
@@ -615,7 +667,16 @@ export default class AeResources extends React.Component<
               columns={[
                 {
                   key: "FileType",
-                  name: "File Type",
+                  name: (
+                    <Stack horizontal horizontalAlign="center">
+                     
+                      
+                        <Icon
+                          iconName={"Page"}
+                        ></Icon>
+                      </Stack>
+                    
+                  ) as any,
                   fieldName: "FileType",
                   minWidth: 20,
                   maxWidth: 50,
