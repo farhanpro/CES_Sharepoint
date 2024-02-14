@@ -16,7 +16,7 @@ export default class DataServices{
         try {   
               let temp =   sp.web.lists.getByTitle(libraryName).items.select('Productgroup')();
               console.log("Raw data heere",temp)
-            return await sp.web.lists.getByTitle(libraryName).items.select('Productgroup','File/Name', 'Modified', 'Editor/Title','FileRef', 'FileLeafRef').expand('File', 'Editor')();
+            return await sp.web.lists.getByTitle(libraryName).items.select('Productgroup','Application','File/Name', 'Modified', 'Editor/Title','FileRef', 'FileLeafRef').expand('File', 'Editor')();
         } catch(error) {
             console.log(error);
         }

@@ -7,6 +7,8 @@ export interface IAeResourcesState{
     FileType:string;
     IsAdd:boolean;
     productGroup:string;
+    application:string;
+    selectedItem:any;
     
     //For image upload 
     titleError: string;
@@ -39,4 +41,5 @@ interface IAeresourcesArr{
     ModifiedBy:string;
     ModifiedOn:string;
     productGroup:string;   
+    application:string;
 }

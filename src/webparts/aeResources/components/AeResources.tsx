@@ -15,6 +15,7 @@ import {
   DefaultButton,
   IconButton,
   StackItem,
+  
   // IStackTokens,
 
 } from "@fluentui/react";
@@ -39,6 +40,13 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 
 let options: IDropdownOption[] = [];
 
+options = [
+  { key: 'All', text: 'All' },
+  { key: 'Type A', text: 'Type A' },
+  { key: 'Type B', text: 'Type B' },
+];
+//let appOptions :  IDropdownOption[] = [];
+
 // const stackTokens: IStackTokens = { childrenGap: 20 };
 
 export default class AeResources extends React.Component<
@@ -57,6 +65,9 @@ export default class AeResources extends React.Component<
       ModifiedOn: "",
       IsAdd:false,
       productGroup:"",
+      application:"",
+      
+      
 
       
       titleError: "",
@@ -72,6 +83,7 @@ export default class AeResources extends React.Component<
       itemId: 0,
       errorMessage : "",
       
+      selectedItem:[],
       CesArr: [],
       CPArr: [],
       CTInfoArr: [],
@@ -99,30 +111,38 @@ export default class AeResources extends React.Component<
       console.log("Here is AE resources",aeResources);
 
       // Mapping data
-      await aeResources.map((element: any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
-        this.setState({
-          ID: element.ID,
-          Title: fileName,
-          ModifiedBy: element.Editor.Title,
-          FileType: fileExtention,
-          ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-          productGroup:element.Productgroup,
-          CesArr: [
-            ...this.state.CesArr,
-            {
-              ID: element.ID,
-              Title: fileName,
-              FileType: fileExtention,
-              ModifiedBy: element.Editor.Title,
-              ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-              productGroup:element.Productgroup
-            },
-          ],
-        });
-        options.push({ key: fileExtention, text: fileExtention });
-      });
+   // Create an array to store unique product groups
+
+
+await aeResources.map((element: any) => {
+  const fileName = element.File.Name;
+  const fileExtention = fileName.split('.').pop().toLowerCase();
+  this.setState({
+    ID: element.ID,
+    Title: fileName,
+    ModifiedBy: element.Editor.Title,
+    FileType: fileExtention,
+    ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+    productGroup: element.Productgroup,
+    CesArr: [
+      ...this.state.CesArr,
+      {
+        ID: element.ID,
+        Title: fileName,
+        FileType: fileExtention,
+        ModifiedBy: element.Editor.Title,
+        ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+        productGroup: element.Productgroup,
+        application:element.Application
+      },
+    ],
+  });
+
+  
+});
+
+
+
 
       // CP Resources
       const cpResources = await commonService.getItems(Constants.LIST_NAMES.CUSTOMER_PRESENTATION);
@@ -145,7 +165,8 @@ export default class AeResources extends React.Component<
               FileType: "",
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-              productGroup:element.Productgroup
+              productGroup:element.Productgroup,
+              application:element.Application
             },
           ],
         });
@@ -171,7 +192,8 @@ export default class AeResources extends React.Component<
               FileType: "",
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-              productGroup:element.Productgroup
+              productGroup:element.Productgroup,
+              application:element.Application
             },
           ],
         });
@@ -197,7 +219,8 @@ export default class AeResources extends React.Component<
               FileType: "",
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-              productGroup:element.Productgroup
+              productGroup:element.Productgroup,
+              application:element.Application
             },
           ],
         });
@@ -278,30 +301,36 @@ export default class AeResources extends React.Component<
 
     const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
   
-      if (item.FileType === selection.key) {
+      if (item.productGroup === selection.key) {
             acc.push(item);
         }
         return acc;
     }, []);
     this.setState({ CesArr: filteredArr });
+    this.componentDidMount();
    // console.log("Filtered Array", filteredArr);
 }
+
 
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
      <section>
         <Stack className={styles.dropdownStack}>
+    
+      
         <Dropdown
   placeholder="Select"
   label="Product Group"
+  multiSelect={true}
   options={options}
   styles={dropdownStyles}
   onChange={()=>{this.handleFileType}}
 />
         <Dropdown
   placeholder="Select"
-  label="Application"
+  label="Applications"
+  multiSelect={true}
   options={options}
   styles={dropdownStyles}
   onChange={()=>{this.handleFileType}}
@@ -309,7 +338,8 @@ export default class AeResources extends React.Component<
         <Dropdown
         
   placeholder="Select"
-  label="Filter type"
+  label="File type"
+  multiSelect={true}
   options={options}
   styles={{ 
     dropdown: { 
@@ -346,9 +376,9 @@ export default class AeResources extends React.Component<
 
               <PrimaryButton
                 style={{
-                  width: "100px",
+                  width: "125px",
                   height: "32px",
-                  borderRadius: "4px",
+                  borderRadius: "1px",
                   backgroundColor: "#5A2A82",
                 }}
                 onClick={() => {this.setState({IsAdd:true})}}
