@@ -140,7 +140,11 @@ flex-direction: row;
 justify-content: right;// Space between Edit and Cancel
 //width: 90%;// Take up the full width
 }
+.dropZoneCss{
+  padding: 15px;
+}
 .inputSection{
+  
   
   display: flex;
   flex-direction: column;

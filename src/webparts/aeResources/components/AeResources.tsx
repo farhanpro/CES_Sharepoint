@@ -294,23 +294,41 @@ await aeResources.map((element: any) => {
     this.setState({ uploadedFileName: _file.path });
   };
 
-  handleFileType = async (e: any, selection: any) => {
+  Productgroup = async (e: any, selection: any) => {
   
- //   console.log(selection.key);
+   console.log("Selection key",selection.key);
   //  console.log("This is CesArr", this.state.CesArr);
+  this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+ await  this.componentDidMount();
 
-    const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
-  
-      if (item.productGroup === selection.key) {
-            acc.push(item);
-        }
-        return acc;
-    }, []);
-    this.setState({ CesArr: filteredArr });
-    this.componentDidMount();
-   // console.log("Filtered Array", filteredArr);
+ if(selection.key === "All")
+ {
+  this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+  this.componentDidMount();
+  return;
+ }
+    const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {if (item.productGroup === selection.key) {acc.push(item);}return acc;}, []);
+    const filteredInternalTraningArr = this.state.ITArr.reduce((acc: any, item: any) => {if (item.productGroup === selection.key) {acc.push(item);}return acc;}, []);
+    const filteredCPArr = this.state.CPArr.reduce((acc: any, item: any) => {if (item.productGroup === selection.key) {acc.push(item);}return acc;}, []);
+    const filteredCTIinfoArr = this.state.CTInfoArr.reduce((acc: any, item: any) => {if (item.productGroup === selection.key) {acc.push(item);}return acc;}, []);
+
+    this.setState({ CesArr: filteredArr,ITArr:filteredInternalTraningArr,CPArr:filteredCPArr,CTInfoArr:filteredCTIinfoArr });
+    console.log("Filtered Array", filteredArr);
 }
 
+applicationRendering = async (e:any,selection:any) =>
+{
+  if(selection.key === "All")
+  {
+   this.setState({CesArr:[]})
+   this.componentDidMount();
+   return;
+  }
+     const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {if (item.application === selection.key) {acc.push(item);}return acc;}, []);
+     this.setState({ CesArr: filteredArr });
+     console.log("Filtered Array", filteredArr);
+  
+}
 
 
   public render(): React.ReactElement<IAeResourcesProps> {
@@ -322,18 +340,19 @@ await aeResources.map((element: any) => {
         <Dropdown
   placeholder="Select"
   label="Product Group"
-  multiSelect={true}
+  
   options={options}
   styles={dropdownStyles}
-  onChange={()=>{this.handleFileType}}
+  onChange={this.Productgroup}
 />
         <Dropdown
   placeholder="Select"
   label="Applications"
-  multiSelect={true}
+ 
+  
   options={options}
   styles={dropdownStyles}
-  onChange={()=>{this.handleFileType}}
+  onChange={this.applicationRendering}
 />
         <Dropdown
         
@@ -347,7 +366,7 @@ await aeResources.map((element: any) => {
     },
     ...dropdownStyles // If you have additional styles, spread them here
   }}
-  onChange={()=>{this.handleFileType}}
+  onChange={()=>{this.applicationRendering}}
 />
 </Stack>
         <Stack horizontal style={{ marginTop: "15px" }}>
@@ -479,7 +498,7 @@ await aeResources.map((element: any) => {
                 }}
               />
             </Stack>
-
+                <Stack className={styles.dropZoneCss}>
             <Dropzone onDrop={(files) => this.handleFileDrop(files)}>
                     {({ getRootProps, getInputProps }) => (
                       <Stack className={styles.dragDropFile}>
@@ -539,7 +558,7 @@ await aeResources.map((element: any) => {
                       </Stack>
                     )}
                 </Dropzone>
-          
+                </Stack>
        
                 <Stack className={styles.footerContent}>
                 <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>
