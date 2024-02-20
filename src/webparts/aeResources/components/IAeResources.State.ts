@@ -8,7 +8,11 @@ export interface IAeResourcesState{
     IsAdd:boolean;
     productGroup:string;
     application:string;
+    selectedkeyApp:string;
     selectedItem:any;
+    createFolderPopUp:boolean;
+    folderName:string;
+
     
     //For image upload 
     titleError: string;

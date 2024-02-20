@@ -15,6 +15,7 @@ import {
   DefaultButton,
   IconButton,
   StackItem,
+  TextField,
   
   // IStackTokens,
 
@@ -39,7 +40,7 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 };
 
 let options: IDropdownOption[] = [];
-
+let selectedPRoductkey = '';
 options = [
   { key: 'All', text: 'All' },
   { key: 'Type A', text: 'Type A' },
@@ -66,6 +67,9 @@ export default class AeResources extends React.Component<
       IsAdd:false,
       productGroup:"",
       application:"",
+      selectedkeyApp:"",
+      createFolderPopUp:false,
+      folderName:"",
       
       
 
@@ -108,45 +112,48 @@ export default class AeResources extends React.Component<
      //const simple = await commonService.simple(Constants.LIST_NAMES.AE_RESOURCES);
      
      //console.log("Ae Resources Simple data",simple);
-      console.log("Here is AE resources",aeResources);
+     // console.log("Here is AE resources",aeResources);
+    
 
       // Mapping data
    // Create an array to store unique product groups
 
 
-await aeResources.map((element: any) => {
-  const fileName = element.File.Name;
-  const fileExtention = fileName.split('.').pop().toLowerCase();
-  this.setState({
-    ID: element.ID,
-    Title: fileName,
-    ModifiedBy: element.Editor.Title,
-    FileType: fileExtention,
-    ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-    productGroup: element.Productgroup,
-    CesArr: [
-      ...this.state.CesArr,
-      {
-        ID: element.ID,
-        Title: fileName,
-        FileType: fileExtention,
-        ModifiedBy: element.Editor.Title,
-        ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
-        productGroup: element.Productgroup,
-        application:element.Application
-      },
-    ],
-  });
+      await aeResources.map((element: any) => {
+        const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
+        this.setState({
+          ID: element.ID,
+          Title: fileName,
+          ModifiedBy: element.Editor.Title,
+          FileType: fileExtention,
+          ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+          productGroup: element.Productgroup,
+          application:element.Application,
+          CesArr: [
+            ...this.state.CesArr,
+            {
+              ID: element.ID,
+              Title: fileName,
+              FileType: fileExtention,
+              ModifiedBy: element.Editor.Title,
+              ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup: element.Productgroup,
+              application:element.Application
+            },
+          ],
+        });
 
-  
-});
+        
+      });
+      console.log("Here are the AE Resources",this.state.CesArr);
 
 
 
 
       // CP Resources
       const cpResources = await commonService.getItems(Constants.LIST_NAMES.CUSTOMER_PRESENTATION);
-      console.log("Customer presentation", cpResources);
+      //console.log("Customer presentation", cpResources);
 
       await cpResources.map((element: any) => {
         const fileName = element.File.Name;
@@ -157,6 +164,7 @@ await aeResources.map((element: any) => {
           FileType: "",
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           productGroup:element.Productgroup,
+          application:element.Application,
           CPArr: [
             ...this.state.CPArr,
             {
@@ -174,7 +182,7 @@ await aeResources.map((element: any) => {
 
       //Competitive Information
       const ctInfo = await commonService.getItems(Constants.LIST_NAMES.COMPETITIVE_INFORMATION);
-      console.log("Competitive Information..", ctInfo);
+      //console.log("Competitive Information..", ctInfo);
       await ctInfo.map((element: any) => {
         const fileName = element.File.Name;
         this.setState({
@@ -184,6 +192,7 @@ await aeResources.map((element: any) => {
           FileType: "",
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           productGroup:element.Productgroup,
+          application:element.Application,
           CTInfoArr: [
             ...this.state.CTInfoArr,
             {
@@ -201,7 +210,7 @@ await aeResources.map((element: any) => {
 
       //Internal tranings
       const it = await commonService.getItems(Constants.LIST_NAMES.INTERNAL_TRANINGS);
-      console.log("Internal Training..", it);
+      //console.log("Internal Training..", it);
       await it.map((element: any) => {
         const fileName = element.File.Name;
         this.setState({
@@ -211,6 +220,7 @@ await aeResources.map((element: any) => {
           FileType: "",
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           productGroup:element.Productgroup,
+          application:element.Application,
           ITArr: [
             ...this.state.ITArr,
             {
@@ -245,7 +255,7 @@ await aeResources.map((element: any) => {
     return <FileTypeIcon {...fileTypeIconProps} />;
   };
 
-  
+
 
   handleFileDrop = (files: any[]) => {
     const file = files[0];
@@ -267,11 +277,12 @@ await aeResources.map((element: any) => {
     // const _listName = "BannerImage";
     const _folderPath = "/sites/FrahanTest/Internal Tranings";
     if (_file) {
-      sp.web
-        .getFolderByServerRelativePath(_folderPath)
-        .files.addUsingPath(_file.name, _file, { Overwrite: true })
+      sp.web.getFolderByServerRelativePath(_folderPath).files.addUsingPath(_file.name, _file, { Overwrite: true })
+     
+
         .then(async (response: any) => {
-          //console.log(response);
+
+          
           const _fileId = response.data.UniqueId;
           this.setState({ fieldId: _fileId });
           const imageUrl = response.data.ServerRelativeUrl;
@@ -300,6 +311,8 @@ await aeResources.map((element: any) => {
   //  console.log("This is CesArr", this.state.CesArr);
   this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
  await  this.componentDidMount();
+ selectedPRoductkey = selection.key;
+ this.setState({selectedkeyApp:selection.key})
 
  if(selection.key === "All")
  {
@@ -316,24 +329,68 @@ await aeResources.map((element: any) => {
     console.log("Filtered Array", filteredArr);
 }
 
-applicationRendering = async (e:any,selection:any) =>
-{
-  if(selection.key === "All")
-  {
-   this.setState({CesArr:[]})
-   this.componentDidMount();
-   return;
+applicationRendering = async (e:any, selection:any) => {
+  if (selection.key === "All") {
+    this.setState({ CesArr: [] });
+    this.componentDidMount();
+    return;
   }
-     const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {if (item.application === selection.key) {acc.push(item);}return acc;}, []);
-     this.setState({ CesArr: filteredArr });
-     console.log("Filtered Array", filteredArr);
-  
+  console.log("CES ARRay:", this.state.CesArr);
+  const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
+    if (item.application == selection.key && item.application == selectedPRoductkey) {
+      acc.push(item);
+      console.log("Accumulator", acc);
+    }
+    return acc;
+  }, []);
+  const filteredInternalTraningArr = this.state.ITArr.reduce((acc: any, item: any) => {
+    if (item.productGroup === selection.key && item.application == selectedPRoductkey) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+  const filteredCPArr = this.state.CPArr.reduce((acc: any, item: any) => {
+    if (item.productGroup === selection.key && item.application == selectedPRoductkey) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+  const filteredCTIinfoArr = this.state.CTInfoArr.reduce((acc: any, item: any) => {
+    if (item.productGroup === selection.key && item.application == selectedPRoductkey) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+  this.setState({ CesArr: filteredArr, ITArr: filteredInternalTraningArr, CPArr: filteredCPArr, CTInfoArr: filteredCTIinfoArr });
+  console.log("Filtered Array", filteredArr);
+}
+
+
+createFolder = async () =>{
+  try {
+    const application= this.state.application;
+    const productGroup = this.state.productGroup;
+    // Ensure authentication is done before performing any operation
+   // await sp.web.folders.addUsingPath("Internal Tranings/Internal Traningsf");
+  const temp =  await sp.web.folders.addUsingPath(`Internal Tranings/${this.state.folderName}`);
+  console.log("Temp : " ,temp,"Aooku",application,"Product group",productGroup);
+   
+   
+    
+
+
+    console.log("Folder created successfully");
+  } catch (error) {
+    console.log("Error creating folder:", error);
+  }
 }
 
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
      <section>
+        <Stack className={styles.searchbarStack}>
+        
         <Stack className={styles.dropdownStack}>
     
       
@@ -368,7 +425,22 @@ applicationRendering = async (e:any,selection:any) =>
   }}
   onChange={()=>{this.applicationRendering}}
 />
-</Stack>
+        </Stack>
+        
+        <Stack style={{paddingTop:"2.5%"}}>
+          <TextField placeholder="Search" 
+          onRenderPrefix={() => (
+            <IconButton
+              //className={styles.searchButton}
+              iconProps={{ iconName: 'Search' }}
+              // onClick={this._handleSearchButtonClick}
+            />
+          )}
+          />
+        </Stack>
+        
+        </Stack>
+
         <Stack horizontal style={{ marginTop: "15px" }}>
        
      
@@ -400,7 +472,7 @@ applicationRendering = async (e:any,selection:any) =>
                   borderRadius: "1px",
                   backgroundColor: "#5A2A82",
                 }}
-                onClick={() => {this.setState({IsAdd:true})}}
+                onClick={() => {this.setState({createFolderPopUp:true})}}
               >
                 Create folder
               </PrimaryButton>
@@ -572,6 +644,81 @@ applicationRendering = async (e:any,selection:any) =>
 
           </Modal>
 
+            <Modal
+            isOpen={this.state.createFolderPopUp}
+            onDismiss={()=>{this.setState({createFolderPopUp:false})}}
+            isBlocking={false}
+            styles={{main: { width: "60%", height: "50%" } }}
+            >
+                <Stack horizontal className={`${styles.headingStyle}`}>
+              <Text variant={"xLarge"} className={`${styles.popupHeadingText}`}>
+                Add Folder
+              </Text>
+
+              <IconButton
+                iconProps={{ iconName: "Cancel" }}
+                className={`${styles.cancelBtn}`}
+                title="Cancel"
+                ariaLabel="Cancel"
+                onClick={() => {
+                  this.setState({ createFolderPopUp: false });
+                }}
+                style={{
+                  fontSize: "50px",
+                  color:"#2E3B4E",
+                  opacity: "1",
+                  marginRight:"10px",
+                  marginTop:"10px"
+                  // Adjust spacing as needed
+                }}
+              />
+            </Stack>
+
+            <Stack className={styles.dropZoneCss}>
+                
+                <TextField
+                  label="Folder name"
+                  placeholder="Folder Name"
+                  value={this.state.folderName}
+                  onChange={(
+                    e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+                    newValue?: string | undefined
+                  ) => this.setState({ folderName: newValue || "" })}
+                  required
+                />
+
+<Dropdown
+  placeholder="Select"
+  label="Product Group"
+  
+  options={options}
+  styles={dropdownStyles}
+  onChange={(selection:any)=>{this.setState({productGroup:selection.key})}}
+/>
+        <Dropdown
+  placeholder="Select"
+  label="Applications"
+ 
+  
+  options={options}
+  styles={dropdownStyles}
+  onChange={(selection:any)=>{this.setState({application:selection.key})}}
+/>
+            </Stack>
+
+            <Stack className={styles.footerContent}>
+                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.createFolder}>
+  Create Folder
+</PrimaryButton>
+
+  <PrimaryButton className={`${styles.seeAll} ${styles.standardButton}`} onClick={()=>{this.setState({IsAdd:false})}}>
+    Cancel
+  </PrimaryButton>
+  </Stack>
+
+            </Modal>
+ 
+ 
           <Stack className={styles.tempCss} style={{ marginLeft: "15px" }}>
             <Stack className={styles.headingRow}>
               <Text className={styles.headingText}>Customer Presentations</Text>

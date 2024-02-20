@@ -34,6 +34,13 @@
   margin-top: 10px;
 }
 
+.searchbarStack{
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+position: sticky;
+}
+
 .dropdownStack{
   display: flex;
   flex-direction: row;
@@ -107,9 +114,9 @@ opacity: 1;
 .tempCss {
   box-shadow: 0px 0px 6px #CBCBCB;
   border-radius: 4px;
-  width: 49%;
+  width: 50%;
   height: 338px;
-  padding: 20px;
+  padding: 15px;
  position: unset;
 }
 .links {
