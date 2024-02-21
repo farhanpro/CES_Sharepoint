@@ -17,6 +17,8 @@ import {
   StackItem,
   TextField,
   SearchBox,
+  Checkbox,
+  mergeStyles
   
   // IStackTokens,
 
@@ -57,6 +59,7 @@ libraries =[{key:Constants.LIST_NAMES.AE_RESOURCES,text:Constants.LIST_NAMES.AE_
 //let appOptions :  IDropdownOption[] = [];
 
 // const stackTokens: IStackTokens = { childrenGap: 20 };
+let fileType : IDropdownOption[]=[];
 
 export default class AeResources extends React.Component<
   IAeResourcesProps,
@@ -82,9 +85,6 @@ export default class AeResources extends React.Component<
       selectedDocLib:"",
       selectedProductGroup:"",
       selectedApplication:"",
-      
-      
-
       
       titleError: "",
       fileError : "",
@@ -176,10 +176,20 @@ export default class AeResources extends React.Component<
         }));
         
       });
-      console.log("Here are the AE Resources",this.state.CesArr);
+     // console.log("Here are the AE Resources",this.state.CesArr);
 
-
-
+     aeResources.forEach((element:any) => {
+      const fileName = element.File.Name;
+      const fileExtention = fileName.split('.').pop().toLowerCase();
+    
+      // Check if the file extension is not already present in fileType
+      const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
+      if (existsIndex === -1) {
+        fileType.push({ key: fileExtention, text: fileExtention });
+      }
+    });
+    
+    
 
       // CP Resources
       const cpResources = await commonService.getItems(Constants.LIST_NAMES.CUSTOMER_PRESENTATION);
@@ -225,6 +235,17 @@ export default class AeResources extends React.Component<
         }));
       });
 
+      cpResources.forEach((element:any) => {
+        const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
+      
+        // Check if the file extension is not already present in fileType
+        const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
+        if (existsIndex === -1) {
+          fileType.push({ key: fileExtention, text: fileExtention });
+        }
+      });
+     
       //Competitive Information
       const ctInfo = await commonService.getItems(Constants.LIST_NAMES.COMPETITIVE_INFORMATION);
       //console.log("Competitive Information..", ctInfo);
@@ -267,6 +288,17 @@ export default class AeResources extends React.Component<
             }
           ]
         }));
+      });
+
+      ctInfo.forEach((element:any) => {
+        const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
+      
+        // Check if the file extension is not already present in fileType
+        const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
+        if (existsIndex === -1) {
+          fileType.push({ key: fileExtention, text: fileExtention });
+        }
       });
 
       //Internal tranings
@@ -312,11 +344,27 @@ export default class AeResources extends React.Component<
           ]
         }));
       });
+
+      it.forEach((element:any) => {
+        const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
+      
+        // Check if the file extension is not already present in fileType
+        const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
+        if (existsIndex === -1) {
+          fileType.push({ key: fileExtention, text: fileExtention });
+        }
+      });
+
+      
     } catch (error) {
       //console.log(error);
     }
   }
 
+   
+
+  
   private renderFileTypeIcon = (
     item: any,
     index: number,
@@ -395,19 +443,11 @@ export default class AeResources extends React.Component<
     this.setState({ uploadedFileName: "" });
 };
 
-
-  
-  
-  
-  
-  
-  
-  
   Productgroup = async (e: any, selection: any) => {
   
   // console.log("Selection key",selection.key);
   //  console.log("This is CesArr", this.state.CesArr);
-  this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+  this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]});
  await  this.componentDidMount();
  selectedPRoductkey = selection.key;
  this.setState({selectedkeyApp:selection.key})
@@ -427,44 +467,23 @@ export default class AeResources extends React.Component<
     console.log("Filtered Array", filteredArr);
 }
 
-applicationRendering = async (e:any, selection:any) => {
-  if (selection.key === "All") {
-    this.Productgroup;
+applicationGroup = async (e:any,selection:any) =>{
+  if(selection.key === "All")
+  {
+    this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+    this.componentDidMount();
     return;
   }
+  this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+  await this.componentDidMount();
+  const filterAeResources = this.state.CesArr.filter(item => {return item.productGroup == selectedPRoductkey && item.application == selection.key;});
+  const filterAppIT = this.state.ITArr.filter(item=>{return item.productGroup == selectedPRoductkey && item.application == selection.key});
+  const filterCPArr = this.state.CPArr.filter(item=>{return item.productGroup == selectedPRoductkey && item.application == selection.key});
+  const filterCTArr = this.state.ITArr.filter(item=>{return item.productGroup == selectedPRoductkey && item.application == selection.key});
 
-  console.log("CES ARRay:", this.state.CesArr);
-  this.setState({ CesArr: [],CPArr:[],CTInfoArr:[],ITArr:[] });
-  this.componentDidMount();
-  const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
-    if (item.application == selection.key && item.productGroup == selectedPRoductkey) {
-      acc.push(item);
-      console.log("Accumulator", acc);
-    }
-    return acc;
-  }, []);
-  const filteredInternalTraningArr = this.state.ITArr.reduce((acc: any, item: any) => {
-    if (item.application === selection.key && item.productGroup == selectedPRoductkey) {
-      acc.push(item);
-    }
-    return acc;
-  }, []);
-  const filteredCPArr = this.state.CPArr.reduce((acc: any, item: any) => {
-    if (item.application === selection.key && item.productGroup == selectedPRoductkey) {
-      acc.push(item);
-    }
-    return acc;
-  }, []);
-  const filteredCTIinfoArr = this.state.CTInfoArr.reduce((acc: any, item: any) => {
-    if (item.application === selection.key && item.productGroup == selectedPRoductkey) {
-      acc.push(item);
-    }
-    return acc;
-  }, []);
-  this.setState({CesArr:[]});
-  this.setState({ CesArr: filteredArr, ITArr: filteredInternalTraningArr, CPArr: filteredCPArr, CTInfoArr: filteredCTIinfoArr });
-  return;
-  //console.log("Filtered Array", filteredArr);
+this.setState({ CesArr: filterAeResources,ITArr:filterAppIT,CPArr:filterCPArr,CTInfoArr:filterCTArr });
+
+  
 }
 
 handleInputChange = async (event: any, newValue: string) => {
@@ -504,6 +523,30 @@ createFolder = async () =>{
   }
 }
 
+onSelectChange = (event:any, item:any) => {
+  const { selectedItem } = this.state;
+  const index = selectedItem.indexOf(item.key);
+  if (index > -1) {
+    selectedItem.splice(index, 1);
+  } else {
+    selectedItem.push(item.key);
+  }
+  this.setState({ selectedItem });
+};
+isItemSelected = (key:any) => {
+  return this.state.selectedItem.includes(key);
+};
+renderDropdownItem = (item:any) => {
+  return (
+    <Stack className={mergeStyles({ display: 'flex',flexDirection:'row', alignItems: 'center' })}>
+      <Checkbox
+       checked={this.isItemSelected(item.key)}
+        onChange={(ev, checked) => this.onSelectChange(ev, item)}
+      />
+      <span>{item.text}</span>
+    </Stack>
+  );
+};
 
   public render(): React.ReactElement<IAeResourcesProps> {
     return (
@@ -514,34 +557,29 @@ createFolder = async () =>{
     
       
         <Dropdown
-  placeholder="Select"
-  label="Product Group"
-  
+        placeholder="Select"
+        label="Product Group"
+        options={options}
+        styles={dropdownStyles}
+        onChange={this.Productgroup}
+        onRenderOption={this.renderDropdownItem}
+      />
+        <Dropdown placeholder="Select" label="Applications" 
   options={options}
   styles={dropdownStyles}
-  onChange={this.Productgroup}
+  onChange={this.applicationGroup}
 />
         <Dropdown
-  placeholder="Select"
-  label="Applications"
- 
-  
-  options={options}
-  styles={dropdownStyles}
-  onChange={this.applicationRendering}
-/>
-        <Dropdown
-        
   placeholder="Select"
   label="File type"
-  options={options}
+  options={fileType}
   styles={{ 
     dropdown: { 
       width: '200px' // Adjust the width as needed
     },
     ...dropdownStyles // If you have additional styles, spread them here
   }}
-  onChange={()=>{this.applicationRendering}}
+  onChange={()=>{console.log("File type")}}
 />
         </Stack>
         
