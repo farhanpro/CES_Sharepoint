@@ -44,6 +44,7 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 
 let options: IDropdownOption[] = [];
 let selectedPRoductkey = '';
+let selectedApplicationkey = '';
 options = [
   { key: 'All', text: 'All' },
   { key: 'Type A', text: 'Type A' },
@@ -362,9 +363,6 @@ export default class AeResources extends React.Component<
     }
   }
 
-   
-
-  
   private renderFileTypeIcon = (
     item: any,
     index: number,
@@ -380,13 +378,10 @@ export default class AeResources extends React.Component<
     return <FileTypeIcon {...fileTypeIconProps} />;
   };
 
-
-
   handleFileDrop = (files: any[]) => {
     const file = files[0];
     this.setState({ file: file, uploadedFileName: file.name });
   };
-
   public handleFileUpload = async () => {
     const _files = this.state.file;
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
@@ -468,6 +463,8 @@ export default class AeResources extends React.Component<
 }
 
 applicationGroup = async (e:any,selection:any) =>{
+  selectedApplicationkey = selection.key;
+  console.log("Selection application key",selectedApplicationkey);
   if(selection.key === "All")
   {
     this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
@@ -482,9 +479,19 @@ applicationGroup = async (e:any,selection:any) =>{
   const filterCTArr = this.state.ITArr.filter(item=>{return item.productGroup == selectedPRoductkey && item.application == selection.key});
 
 this.setState({ CesArr: filterAeResources,ITArr:filterAppIT,CPArr:filterCPArr,CTInfoArr:filterCTArr });
-
-  
 }
+
+fileTypeFunction = async (event:any,selection:any) =>{
+ 
+  this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+  await this.componentDidMount();
+  const filetypeAeResources =  this.state.CesArr.filter(item =>{return   item.FileType == selection.key})
+  const filetypeCPResources =  this.state.CPArr.filter(item =>{return item.FileType == selection.key})
+  const filetypeCTInfoArr =   this.state.CTInfoArr.filter(item =>{ return  item.FileType == selection.key})
+  const filetypeITArr =  this.state.ITArr.filter(item =>{return  item.FileType == selection.key})
+  this.setState({CesArr:filetypeAeResources,CPArr:filetypeCPResources,CTInfoArr:filetypeCTInfoArr,ITArr:filetypeITArr});
+}
+
 
 handleInputChange = async (event: any, newValue: string) => {
   if (newValue === '') {
@@ -579,7 +586,7 @@ renderDropdownItem = (item:any) => {
     },
     ...dropdownStyles // If you have additional styles, spread them here
   }}
-  onChange={()=>{console.log("File type")}}
+  onChange={this.fileTypeFunction}
 />
         </Stack>
         
