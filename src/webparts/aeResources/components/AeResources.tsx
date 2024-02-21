@@ -16,6 +16,7 @@ import {
   IconButton,
   StackItem,
   TextField,
+  SearchBox,
   
   // IStackTokens,
 
@@ -26,7 +27,7 @@ import {
   FileTypeIcon,
   IconType,
   ImageSize,
-} from "@pnp/spfx-controls-react/lib/FileTypeIcon";
+} from "@pnp/spfx-controls-react/lib/FileTypeIcon";    
 import Dropzone from "react-dropzone";
 import * as moment from "moment";
 import Constants from "../../ces/common/constants";
@@ -46,6 +47,13 @@ options = [
   { key: 'Type A', text: 'Type A' },
   { key: 'Type B', text: 'Type B' },
 ];
+
+let libraries : IDropdownOption[] = [];
+libraries =[{key:Constants.LIST_NAMES.AE_RESOURCES,text:Constants.LIST_NAMES.AE_RESOURCES},
+            {key:Constants.LIST_NAMES.CUSTOMER_PRESENTATION,text:Constants.LIST_NAMES.CUSTOMER_PRESENTATION},
+            {key:Constants.LIST_NAMES.COMPETITIVE_INFORMATION,text:Constants.LIST_NAMES.COMPETITIVE_INFORMATION},
+            {key:Constants.LIST_NAMES.INTERNAL_TRANINGS,text:Constants.LIST_NAMES.INTERNAL_TRANINGS}
+          ]
 //let appOptions :  IDropdownOption[] = [];
 
 // const stackTokens: IStackTokens = { childrenGap: 20 };
@@ -70,6 +78,10 @@ export default class AeResources extends React.Component<
       selectedkeyApp:"",
       createFolderPopUp:false,
       folderName:"",
+      searchValue:"",
+      selectedDocLib:"",
+      selectedProductGroup:"",
+      selectedApplication:"",
       
       
 
@@ -89,9 +101,13 @@ export default class AeResources extends React.Component<
       
       selectedItem:[],
       CesArr: [],
+      originalDataCesArr:[],
       CPArr: [],
+      originalDataCPArr:[],
       CTInfoArr: [],
+      originalDataCTInfoArr:[],
       ITArr: [],
+      originalDataITArr:[]
     };
     sp = spfi().using(SPFx(this.props.spcontext));
     //console.log("Sp installed", sp);
@@ -104,7 +120,7 @@ export default class AeResources extends React.Component<
     commonService = new DataServices(this.props.spcontext);
   }
 
-  async componentDidMount(): Promise<void> {
+  async componentDidMount(): Promise<void> {  
     // const data: { Name: any;Modified:any; ModifiedBy: any; FileType: string;FileRed:string;FileLeafRef:string; }[] = [];
     try {
       // get documents using pnp js web
@@ -123,7 +139,7 @@ export default class AeResources extends React.Component<
         const fileName = element.File.Name;
         const fileExtention = fileName.split('.').pop().toLowerCase();
         this.setState({
-          ID: element.ID,
+          ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
           FileType: fileExtention,
@@ -133,7 +149,7 @@ export default class AeResources extends React.Component<
           CesArr: [
             ...this.state.CesArr,
             {
-              ID: element.ID,
+              ID: element.Id,
               Title: fileName,
               FileType: fileExtention,
               ModifiedBy: element.Editor.Title,
@@ -144,6 +160,20 @@ export default class AeResources extends React.Component<
           ],
         });
 
+        this.setState(prevState => ({
+          originalDataCesArr: [
+            ...prevState.originalDataCesArr,
+            {
+              ID: element.Id,
+              Title: fileName,
+              FileType: fileExtention,
+              ModifiedBy: element.Editor.Title,
+              ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup: element.Productgroup,
+              application:element.Application
+            }
+          ]
+        }));
         
       });
       console.log("Here are the AE Resources",this.state.CesArr);
@@ -157,8 +187,9 @@ export default class AeResources extends React.Component<
 
       await cpResources.map((element: any) => {
         const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
         this.setState({
-          ID: element.ID,
+          ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
           FileType: "",
@@ -168,7 +199,7 @@ export default class AeResources extends React.Component<
           CPArr: [
             ...this.state.CPArr,
             {
-              ID: element.ID,
+              ID: element.Id,
               Title: fileName,
               FileType: "",
               ModifiedBy: element.Editor.Title,
@@ -178,6 +209,20 @@ export default class AeResources extends React.Component<
             },
           ],
         });
+        this.setState(prevState => ({
+          originalDataCPArr: [
+            ...prevState.originalDataCPArr,
+            {
+              ID: element.Id,
+              Title: fileName,
+              FileType: fileExtention,
+              ModifiedBy: element.Editor.Title,
+              ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup: element.Productgroup,
+              application:element.Application
+            }
+          ]
+        }));
       });
 
       //Competitive Information
@@ -185,8 +230,9 @@ export default class AeResources extends React.Component<
       //console.log("Competitive Information..", ctInfo);
       await ctInfo.map((element: any) => {
         const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
         this.setState({
-          ID: element.ID,
+          ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
           FileType: "",
@@ -196,7 +242,7 @@ export default class AeResources extends React.Component<
           CTInfoArr: [
             ...this.state.CTInfoArr,
             {
-              ID: element.ID,
+              ID: element.Id,
               Title: fileName,
               FileType: "",
               ModifiedBy: element.Editor.Title,
@@ -206,6 +252,21 @@ export default class AeResources extends React.Component<
             },
           ],
         });
+
+        this.setState(prevState => ({
+          originalDataCTInfoArr: [
+            ...prevState.originalDataCTInfoArr,
+            {
+              ID: element.Id,
+              Title: fileName,
+              FileType: fileExtention,
+              ModifiedBy: element.Editor.Title,
+              ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup: element.Productgroup,
+              application:element.Application
+            }
+          ]
+        }));
       });
 
       //Internal tranings
@@ -213,8 +274,9 @@ export default class AeResources extends React.Component<
       //console.log("Internal Training..", it);
       await it.map((element: any) => {
         const fileName = element.File.Name;
+        const fileExtention = fileName.split('.').pop().toLowerCase();
         this.setState({
-          ID: element.ID,
+          ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
           FileType: "",
@@ -224,7 +286,7 @@ export default class AeResources extends React.Component<
           ITArr: [
             ...this.state.ITArr,
             {
-              ID: element.ID,
+              ID: element.Id,
               Title: fileName,
               FileType: "",
               ModifiedBy: element.Editor.Title,
@@ -234,6 +296,21 @@ export default class AeResources extends React.Component<
             },
           ],
         });
+
+        this.setState(prevState => ({
+          originalDataITArr: [
+            ...prevState.originalDataITArr,
+            {
+              ID: element.Id,
+              Title: fileName,
+              FileType: fileExtention,
+              ModifiedBy: element.Editor.Title,
+              ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
+              productGroup: element.Productgroup,
+              application:element.Application
+            }
+          ]
+        }));
       });
     } catch (error) {
       //console.log(error);
@@ -264,50 +341,71 @@ export default class AeResources extends React.Component<
 
   public handleFileUpload = async () => {
     const _files = this.state.file;
-    //console.log("Files to be stored here := ", _files);
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+
     if (_files.length === 0) {
-      alert("No files were selected.");
-      return;
+        alert("No files were selected.");
+        return;
     }
+
     const _file = _files;
-    this.setState({ file: _file, uploadedFileName:_files.name});
-    
-    
-    // const _listName = "BannerImage";
-    const _folderPath = "/sites/FrahanTest/Internal Tranings";
+
+    this.setState({ file: _file, uploadedFileName: _file.name }); 
+
+    const _folderPath = `/sites/FrahanTest/${this.state.selectedDocLib}`;
+
     if (_file) {
-      sp.web.getFolderByServerRelativePath(_folderPath).files.addUsingPath(_file.name, _file, { Overwrite: true })
-     
-
-        .then(async (response: any) => {
-
-          
-          const _fileId = response.data.UniqueId;
-          this.setState({ fieldId: _fileId });
-          const imageUrl = response.data.ServerRelativeUrl;
-          this.setState({ uploadedFile: imageUrl,IsAdd:false ,ITArr:[]});
-          this.componentDidMount();
-          //console.log("Image Url", imageUrl);
+        try {
+            const item = await sp.web.getFolderByServerRelativePath(_folderPath).files.addUsingPath(_file.name, _file, { Overwrite: true });
+            const itemInfo = await item.file.listItemAllFields();
+            const itemId = itemInfo.Id;
 
 
-          // this.addItem(imageUrl);
-        });
+            // Update metadata fields
+            await sp.web.lists.getByTitle(`${this.state.selectedDocLib}`).items.getById(itemId).update({
+                Productgroup: this.state.selectedProductGroup,
+                Application: this.state.application
+            });
+
+            const imageUrl = item.data.ServerRelativeUrl;
+
+            this.setState({ 
+               // fieldId: itemId.toString(),
+                uploadedFile: imageUrl,
+                IsAdd: false,
+                uploadedFileName : "",
+                file:"",
+                ITArr: []
+            });
+
+            this.componentDidMount();
+        } catch (error) {
+            console.error('Error occurred during file upload:', error);
+            // Handle error appropriately
+        }
     }
 
     if (_file.size > maxSizeInBytes) {
-      this.setState({ uploadedFileError: "File size exceeds the 10MB limit." });
-      return;
+        this.setState({ uploadedFileError: "File size exceeds the 10MB limit." });
+        return;
     }
+
     this.setState({ uploadedFileError: "" });
-
     this.setState({ itemId: _file.itemId });
-    this.setState({ uploadedFileName: _file.path });
-  };
+    this.setState({ uploadedFileName: "" });
+};
 
+
+  
+  
+  
+  
+  
+  
+  
   Productgroup = async (e: any, selection: any) => {
   
-   console.log("Selection key",selection.key);
+  // console.log("Selection key",selection.key);
   //  console.log("This is CesArr", this.state.CesArr);
   this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
  await  this.componentDidMount();
@@ -331,38 +429,64 @@ export default class AeResources extends React.Component<
 
 applicationRendering = async (e:any, selection:any) => {
   if (selection.key === "All") {
-    this.setState({ CesArr: [] });
-    this.componentDidMount();
+    this.Productgroup;
     return;
   }
+
   console.log("CES ARRay:", this.state.CesArr);
+  this.setState({ CesArr: [],CPArr:[],CTInfoArr:[],ITArr:[] });
+  this.componentDidMount();
   const filteredArr = this.state.CesArr.reduce((acc: any, item: any) => {
-    if (item.application == selection.key && item.application == selectedPRoductkey) {
+    if (item.application == selection.key && item.productGroup == selectedPRoductkey) {
       acc.push(item);
       console.log("Accumulator", acc);
     }
     return acc;
   }, []);
   const filteredInternalTraningArr = this.state.ITArr.reduce((acc: any, item: any) => {
-    if (item.productGroup === selection.key && item.application == selectedPRoductkey) {
+    if (item.application === selection.key && item.productGroup == selectedPRoductkey) {
       acc.push(item);
     }
     return acc;
   }, []);
   const filteredCPArr = this.state.CPArr.reduce((acc: any, item: any) => {
-    if (item.productGroup === selection.key && item.application == selectedPRoductkey) {
+    if (item.application === selection.key && item.productGroup == selectedPRoductkey) {
       acc.push(item);
     }
     return acc;
   }, []);
   const filteredCTIinfoArr = this.state.CTInfoArr.reduce((acc: any, item: any) => {
-    if (item.productGroup === selection.key && item.application == selectedPRoductkey) {
+    if (item.application === selection.key && item.productGroup == selectedPRoductkey) {
       acc.push(item);
     }
     return acc;
   }, []);
+  this.setState({CesArr:[]});
   this.setState({ CesArr: filteredArr, ITArr: filteredInternalTraningArr, CPArr: filteredCPArr, CTInfoArr: filteredCTIinfoArr });
-  console.log("Filtered Array", filteredArr);
+  return;
+  //console.log("Filtered Array", filteredArr);
+}
+
+handleInputChange = async (event: any, newValue: string) => {
+  if (newValue === '') {
+    // if search box is cleared, reset CesArr to originalData
+    this.setState({ CesArr: this.state.originalDataCesArr ,CPArr:this.state.originalDataCPArr,CTInfoArr:this.state.originalDataCTInfoArr,ITArr:this.state.originalDataITArr});
+  } else {
+     const filteredResources =  this.state.originalDataCesArr.filter( resource => 
+       resource.Title.toLowerCase().includes(newValue.toLowerCase())
+    );
+    const filteredCPResources =  this.state.originalDataCPArr.filter( resource => 
+      resource.Title.toLowerCase().includes(newValue.toLowerCase())
+   );
+   const filteredCTResources =  this.state.originalDataCTInfoArr.filter( resource => 
+    resource.Title.toLowerCase().includes(newValue.toLowerCase())
+ );
+   const filteredITRResources =  this.state.originalDataITArr.filter( resource => 
+    resource.Title.toLowerCase().includes(newValue.toLowerCase())
+ );
+    this.setState({ CesArr: filteredResources,CPArr:filteredCPResources,CTInfoArr:filteredCTResources,ITArr:filteredITRResources });
+  }
+  this.setState({ searchValue: newValue });
 }
 
 
@@ -373,12 +497,7 @@ createFolder = async () =>{
     // Ensure authentication is done before performing any operation
    // await sp.web.folders.addUsingPath("Internal Tranings/Internal Traningsf");
   const temp =  await sp.web.folders.addUsingPath(`Internal Tranings/${this.state.folderName}`);
-  console.log("Temp : " ,temp,"Aooku",application,"Product group",productGroup);
-   
-   
-    
-
-
+  console.log("Temp : " ,temp,"Application",application,"Product group",productGroup);
     console.log("Folder created successfully");
   } catch (error) {
     console.log("Error creating folder:", error);
@@ -415,7 +534,6 @@ createFolder = async () =>{
         
   placeholder="Select"
   label="File type"
-  multiSelect={true}
   options={options}
   styles={{ 
     dropdown: { 
@@ -428,15 +546,11 @@ createFolder = async () =>{
         </Stack>
         
         <Stack style={{paddingTop:"2.5%"}}>
-          <TextField placeholder="Search" 
-          onRenderPrefix={() => (
-            <IconButton
-              //className={styles.searchButton}
-              iconProps={{ iconName: 'Search' }}
-              // onClick={this._handleSearchButtonClick}
-            />
-          )}
-          />
+          <SearchBox
+  placeholder="Search"
+  onChange={this.handleInputChange}
+/>
+
         </Stack>
         
         </Stack>
@@ -544,7 +658,7 @@ createFolder = async () =>{
           onDismiss={() => this.setState({ IsAdd: false })}
           isBlocking={false}
             //styles={{ main: { maxWidth: 450 } }}
-          styles={{ main: { width: "60%", height: "50%" } }}
+          styles={{ main: { width: "50%", height: "60%" } }}
           >
             
             <Stack horizontal className={`${styles.headingStyle}`}>
@@ -631,6 +745,33 @@ createFolder = async () =>{
                     )}
                 </Dropzone>
                 </Stack>
+                <Stack className={styles.modalDropdownStack}>
+                <Dropdown
+                   placeholder="Select Library"
+                 label="Select Library"
+                options={libraries}
+                  styles={dropdownStyles}
+                  onChange={(e, selection: any) => { this.setState({ selectedDocLib: selection.key }) }}
+                />
+
+                <Dropdown
+                placeholder="Select Product group"
+                label="Product Group"
+                options={options}
+                onChange={(e,selection:any)=>{this.setState({selectedProductGroup:selection.key})}}
+                >
+                </Dropdown>
+                <Dropdown
+                  placeholder="Select Application"
+                  label="Label"
+                  options={options}
+                  onChange={(e,selection:any)=>{this.setState({selectedApplication:selection.key})}}
+                  >
+
+                </Dropdown>
+
+</Stack>
+
        
                 <Stack className={styles.footerContent}>
                 <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>

@@ -48,6 +48,15 @@ position: sticky;
   position: sticky;
   width: 49%;
 }
+.modalDropdownStack{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  position: sticky;
+
+}
+
+
 .headingStyle {
   background-color: #FFF;
   display: flex;

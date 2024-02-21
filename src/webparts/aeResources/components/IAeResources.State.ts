@@ -9,9 +9,13 @@ export interface IAeResourcesState{
     productGroup:string;
     application:string;
     selectedkeyApp:string;
+    searchValue:string;
     selectedItem:any;
     createFolderPopUp:boolean;
     folderName:string;
+    selectedDocLib : string;
+    selectedProductGroup:string;
+    selectedApplication:string;
 
     
     //For image upload 
@@ -27,12 +31,17 @@ export interface IAeResourcesState{
     uploadedFile : any;
     itemId: number;
     errorMessage : string;
+   
 
 
     CesArr:IAeresourcesArr[];
+    originalDataCesArr: IAeresourcesArr[] // new state for original data
     CPArr:IAeresourcesArr[];
+    originalDataCPArr: IAeresourcesArr[]
     CTInfoArr:IAeresourcesArr[];
+    originalDataCTInfoArr: IAeresourcesArr[]
     ITArr:IAeresourcesArr[];
+    originalDataITArr:IAeresourcesArr[]
 
     
 
