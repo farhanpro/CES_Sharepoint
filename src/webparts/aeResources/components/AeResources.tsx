@@ -60,7 +60,7 @@ libraries =[{key:Constants.LIST_NAMES.AE_RESOURCES,text:Constants.LIST_NAMES.AE_
 //let appOptions :  IDropdownOption[] = [];
 
 // const stackTokens: IStackTokens = { childrenGap: 20 };
-let fileType : IDropdownOption[]=[];
+let fileType : IDropdownOption[]=[{key:"All",text:"All"}];
 
 export default class AeResources extends React.Component<
   IAeResourcesProps,
@@ -126,19 +126,12 @@ export default class AeResources extends React.Component<
     try {
       // get documents using pnp js web
       const aeResources = await commonService.getItems(Constants.LIST_NAMES.AE_RESOURCES);
-     //const simple = await commonService.simple(Constants.LIST_NAMES.AE_RESOURCES);
-     
-     //console.log("Ae Resources Simple data",simple);
-     // console.log("Here is AE resources",aeResources);
-    
-
+   
       // Mapping data
-   // Create an array to store unique product groups
-
-
+      // Create an array to store unique product groups
       await aeResources.map((element: any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
         this.setState({
           ID: element.Id,
           Title: fileName,
@@ -179,12 +172,12 @@ export default class AeResources extends React.Component<
       });
      // console.log("Here are the AE Resources",this.state.CesArr);
 
-     aeResources.forEach((element:any) => {
-      const fileName = element.File.Name;
-      const fileExtention = fileName.split('.').pop().toLowerCase();
+   await  aeResources.forEach((element:any) => {
+    const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+    const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
     
       // Check if the file extension is not already present in fileType
-      const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
+      const existsIndex = fileExtention=='folder'? "folder":fileType.findIndex((item) => item.key === fileExtention);
       if (existsIndex === -1) {
         fileType.push({ key: fileExtention, text: fileExtention });
       }
@@ -197,13 +190,13 @@ export default class AeResources extends React.Component<
       //console.log("Customer presentation", cpResources);
 
       await cpResources.map((element: any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
         this.setState({
           ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
-          FileType: "",
+          FileType: fileExtention,
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           productGroup:element.Productgroup,
           application:element.Application,
@@ -212,7 +205,7 @@ export default class AeResources extends React.Component<
             {
               ID: element.Id,
               Title: fileName,
-              FileType: "",
+              FileType: fileExtention,
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
               productGroup:element.Productgroup,
@@ -235,29 +228,29 @@ export default class AeResources extends React.Component<
           ]
         }));
       });
+      await  cpResources.forEach((element:any) => {
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
+        
+          // Check if the file extension is not already present in fileType
+          const existsIndex = fileExtention=='folder'? "folder":fileType.findIndex((item) => item.key === fileExtention);
+          if (existsIndex === -1) {
+            fileType.push({ key: fileExtention, text: fileExtention });
+          }
+        });
 
-      cpResources.forEach((element:any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
-      
-        // Check if the file extension is not already present in fileType
-        const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
-        if (existsIndex === -1) {
-          fileType.push({ key: fileExtention, text: fileExtention });
-        }
-      });
-     
+
       //Competitive Information
       const ctInfo = await commonService.getItems(Constants.LIST_NAMES.COMPETITIVE_INFORMATION);
       //console.log("Competitive Information..", ctInfo);
       await ctInfo.map((element: any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
         this.setState({
           ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
-          FileType: "",
+          FileType: fileExtention,
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           productGroup:element.Productgroup,
           application:element.Application,
@@ -266,7 +259,7 @@ export default class AeResources extends React.Component<
             {
               ID: element.Id,
               Title: fileName,
-              FileType: "",
+              FileType: fileExtention,
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
               productGroup:element.Productgroup,
@@ -290,29 +283,30 @@ export default class AeResources extends React.Component<
           ]
         }));
       });
-
-      ctInfo.forEach((element:any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
       
-        // Check if the file extension is not already present in fileType
-        const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
-        if (existsIndex === -1) {
-          fileType.push({ key: fileExtention, text: fileExtention });
-        }
-      });
+
+      await  ctInfo.forEach((element:any) => {
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
+        
+          // Check if the file extension is not already present in fileType
+          const existsIndex = fileExtention=='folder'? "folder":fileType.findIndex((item) => item.key === fileExtention);
+          if (existsIndex === -1) {
+            fileType.push({ key: fileExtention, text: fileExtention });
+          }
+        });
 
       //Internal tranings
       const it = await commonService.getItems(Constants.LIST_NAMES.INTERNAL_TRANINGS);
       //console.log("Internal Training..", it);
       await it.map((element: any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
         this.setState({
           ID: element.Id,
           Title: fileName,
           ModifiedBy: element.Editor.Title,
-          FileType: "",
+          FileType: fileExtention,
           ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
           productGroup:element.Productgroup,
           application:element.Application,
@@ -321,7 +315,7 @@ export default class AeResources extends React.Component<
             {
               ID: element.Id,
               Title: fileName,
-              FileType: "",
+              FileType: fileExtention,
               ModifiedBy: element.Editor.Title,
               ModifiedOn: moment(element.Modified).format("DD-MM-YYYY"),
               productGroup:element.Productgroup,
@@ -346,37 +340,41 @@ export default class AeResources extends React.Component<
         }));
       });
 
-      it.forEach((element:any) => {
-        const fileName = element.File.Name;
-        const fileExtention = fileName.split('.').pop().toLowerCase();
-      
-        // Check if the file extension is not already present in fileType
-        const existsIndex = fileType.findIndex((item) => item.key === fileExtention);
-        if (existsIndex === -1) {
-          fileType.push({ key: fileExtention, text: fileExtention });
-        }
-      });
+      await  it.forEach((element:any) => {
+        const fileName = element.File && element.File.Name !== undefined ? element.File.Name : element.FileLeafRef;
+        const fileExtention = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'folder';
+        
+          // Check if the file extension is not already present in fileType
+          const existsIndex = fileExtention=='folder'? "folder":fileType.findIndex((item) => item.key === fileExtention);
+          if (existsIndex === -1) {
+            fileType.push({ key: fileExtention, text: fileExtention });
+          }
+        });
 
       
     } catch (error) {
-      //console.log(error);
+      console.log(error);
     }
   }
 
-  private renderFileTypeIcon = (
+  private renderFileTypeIcon = (   
     item: any,
     index: number,
     column: IColumn
   ): JSX.Element => {
-    const fileTypeIconProps = {
-     
-      type: IconType.image,
-      path: item.Title,
-      size: ImageSize.small,
-    };
-
-    return <FileTypeIcon {...fileTypeIconProps} />;
-  };
+    if (item && item.FileType && item.FileType === 'folder') {
+        // If it's a folder, return the folder icon
+        return <Icon iconName="FabricFolderFill" />;
+    } else {
+        // If it's not a folder, return the regular file icon
+        const fileTypeIconProps = {
+            type: IconType.image,
+            path: item.Title,
+            size: ImageSize.small,
+        };
+        return <FileTypeIcon {...fileTypeIconProps} />;
+    }
+};
 
   handleFileDrop = (files: any[]) => {
     const file = files[0];
@@ -483,6 +481,11 @@ this.setState({ CesArr: filterAeResources,ITArr:filterAppIT,CPArr:filterCPArr,CT
 
 fileTypeFunction = async (event:any,selection:any) =>{
  
+  if(selection.key == "All")
+  {
+    this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
+    await this.componentDidMount();  
+  }
   this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
   await this.componentDidMount();
   const filetypeAeResources =  this.state.CesArr.filter(item =>{return   item.FileType == selection.key})
@@ -518,13 +521,14 @@ handleInputChange = async (event: any, newValue: string) => {
 
 createFolder = async () =>{
   try {
-    const application= this.state.application;
-    const productGroup = this.state.productGroup;
+    // const application= this.state.application;
+    // const productGroup = this.state.productGroup;
     // Ensure authentication is done before performing any operation
    // await sp.web.folders.addUsingPath("Internal Tranings/Internal Traningsf");
-  const temp =  await sp.web.folders.addUsingPath(`Internal Tranings/${this.state.folderName}`);
-  console.log("Temp : " ,temp,"Application",application,"Product group",productGroup);
+  const item  =  await sp.web.folders.addUsingPath(`${this.state.selectedDocLib}/${this.state.folderName}`);
+    console.log("ITem",item);
     console.log("Folder created successfully");
+    this.setState({folderName:"",selectedDocLib:"",createFolderPopUp: false })
   } catch (error) {
     console.log("Error creating folder:", error);
   }
@@ -698,212 +702,6 @@ renderDropdownItem = (item:any) => {
             </Stack>
           </Stack>
 
-          <Modal 
-          isOpen={this.state.IsAdd}
-          onDismiss={() => this.setState({ IsAdd: false })}
-          isBlocking={false}
-            //styles={{ main: { maxWidth: 450 } }}
-          styles={{ main: { width: "50%", height: "60%" } }}
-          >
-            
-            <Stack horizontal className={`${styles.headingStyle}`}>
-              <Text variant={"xLarge"} className={`${styles.popupHeadingText}`}>
-                Add File
-              </Text>
-
-              <IconButton
-                iconProps={{ iconName: "Cancel" }}
-                className={`${styles.cancelBtn}`}
-                title="Cancel"
-                ariaLabel="Cancel"
-                onClick={() => {
-                  this.setState({ IsAdd: false });
-                }}
-                style={{
-                  fontSize: "50px",
-                  color:"#2E3B4E",
-                  opacity: "1",
-                  marginRight:"10px",
-                  marginTop:"10px"
-                  // Adjust spacing as needed
-                }}
-              />
-            </Stack>
-                <Stack className={styles.dropZoneCss}>
-            <Dropzone onDrop={(files) => this.handleFileDrop(files)}>
-                    {({ getRootProps, getInputProps }) => (
-                      <Stack className={styles.dragDropFile}>
-                        <Stack
-                          {...getRootProps({
-                            onDrop: (event) => event.stopPropagation()
-                          })}
-                          className={styles.inputSection}
-                        >
-                          <input
-                            {...getInputProps()}
-                            placeholder="No File Chosen"
-                            required
-                          />
-                          <Icon
-                            iconName="CloudUpload"
-                            style={{
-                              fontSize: "38px",
-                              color: "#5A2A82",
-                              marginBottom: "10px",
-                            }}
-                          />
-                          <p>Drag and drop files here, or click to select files</p>
-                          <div>
-                          </div>
-                          <p>
-                            {this.state.uploadedFileName
-                              ? ""
-                              : this.state.uploadedFileError
-                              ? ""
-                              : this.state.fileError}
-                          </p>
-                        </Stack>
-                        {this.state.uploadedFileName && (
-                          <Stack
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              marginRight: "60px",
-                            }}
-                          >
-                            <Icon
-                              iconName="Document"
-                              style={{
-                                marginRight: "8px",
-                                fontSize: "20px",
-                                color: "#5A2A82",
-                                marginLeft: "10%",
-                                marginTop: "5px",
-                              }}
-                            />
-                            <span>{this.state.uploadedFileName}</span>
-                          </Stack>
-                        )}
-                      </Stack>
-                    )}
-                </Dropzone>
-                </Stack>
-                <Stack className={styles.modalDropdownStack}>
-                <Dropdown
-                   placeholder="Select Library"
-                 label="Select Library"
-                options={libraries}
-                  styles={dropdownStyles}
-                  onChange={(e, selection: any) => { this.setState({ selectedDocLib: selection.key }) }}
-                />
-
-                <Dropdown
-                placeholder="Select Product group"
-                label="Product Group"
-                options={options}
-                onChange={(e,selection:any)=>{this.setState({selectedProductGroup:selection.key})}}
-                >
-                </Dropdown>
-                <Dropdown
-                  placeholder="Select Application"
-                  label="Label"
-                  options={options}
-                  onChange={(e,selection:any)=>{this.setState({selectedApplication:selection.key})}}
-                  >
-
-                </Dropdown>
-
-</Stack>
-
-       
-                <Stack className={styles.footerContent}>
-                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>
-  Upload
-</PrimaryButton>
-
-  <PrimaryButton className={`${styles.seeAll} ${styles.standardButton}`} onClick={()=>{this.setState({IsAdd:false})}}>
-    Cancel
-  </PrimaryButton>
-</Stack>
-
-          </Modal>
-
-            <Modal
-            isOpen={this.state.createFolderPopUp}
-            onDismiss={()=>{this.setState({createFolderPopUp:false})}}
-            isBlocking={false}
-            styles={{main: { width: "60%", height: "50%" } }}
-            >
-                <Stack horizontal className={`${styles.headingStyle}`}>
-              <Text variant={"xLarge"} className={`${styles.popupHeadingText}`}>
-                Add Folder
-              </Text>
-
-              <IconButton
-                iconProps={{ iconName: "Cancel" }}
-                className={`${styles.cancelBtn}`}
-                title="Cancel"
-                ariaLabel="Cancel"
-                onClick={() => {
-                  this.setState({ createFolderPopUp: false });
-                }}
-                style={{
-                  fontSize: "50px",
-                  color:"#2E3B4E",
-                  opacity: "1",
-                  marginRight:"10px",
-                  marginTop:"10px"
-                  // Adjust spacing as needed
-                }}
-              />
-            </Stack>
-
-            <Stack className={styles.dropZoneCss}>
-                
-                <TextField
-                  label="Folder name"
-                  placeholder="Folder Name"
-                  value={this.state.folderName}
-                  onChange={(
-                    e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-                    newValue?: string | undefined
-                  ) => this.setState({ folderName: newValue || "" })}
-                  required
-                />
-
-<Dropdown
-  placeholder="Select"
-  label="Product Group"
-  
-  options={options}
-  styles={dropdownStyles}
-  onChange={(selection:any)=>{this.setState({productGroup:selection.key})}}
-/>
-        <Dropdown
-  placeholder="Select"
-  label="Applications"
- 
-  
-  options={options}
-  styles={dropdownStyles}
-  onChange={(selection:any)=>{this.setState({application:selection.key})}}
-/>
-            </Stack>
-
-            <Stack className={styles.footerContent}>
-                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.createFolder}>
-  Create Folder
-</PrimaryButton>
-
-  <PrimaryButton className={`${styles.seeAll} ${styles.standardButton}`} onClick={()=>{this.setState({IsAdd:false})}}>
-    Cancel
-  </PrimaryButton>
-  </Stack>
-
-            </Modal>
- 
  
           <Stack className={styles.tempCss} style={{ marginLeft: "15px" }}>
             <Stack className={styles.headingRow}>
@@ -1099,6 +897,207 @@ renderDropdownItem = (item:any) => {
             />
           </Stack>
           </Stack>
+          
+          <Modal 
+          isOpen={this.state.IsAdd}
+          onDismiss={() => this.setState({ IsAdd: false })}
+          isBlocking={false}
+            //styles={{ main: { maxWidth: 450 } }}
+          styles={{ main: { width: "50%", height: "60%" } }}
+          >
+            
+            <Stack horizontal className={`${styles.headingStyle}`}>
+              <Text variant={"xLarge"} className={`${styles.popupHeadingText}`}>
+                Add File
+              </Text>
+
+              <IconButton
+                iconProps={{ iconName: "Cancel" }}
+                className={`${styles.cancelBtn}`}
+                title="Cancel"
+                ariaLabel="Cancel"
+                onClick={() => {
+                  this.setState({ IsAdd: false });
+                }}
+                style={{
+                  fontSize: "50px",
+                  color:"#2E3B4E",
+                  opacity: "1",
+                  marginRight:"10px",
+                  marginTop:"10px"
+                  // Adjust spacing as needed
+                }}
+              />
+            </Stack>
+                <Stack className={styles.dropZoneCss}>
+            <Dropzone onDrop={(files) => this.handleFileDrop(files)}>
+                    {({ getRootProps, getInputProps }) => (
+                      <Stack className={styles.dragDropFile}>
+                        <Stack
+                          {...getRootProps({
+                            onDrop: (event) => event.stopPropagation()
+                          })}
+                          className={styles.inputSection}
+                        >
+                          <input
+                            {...getInputProps()}
+                            placeholder="No File Chosen"
+                            required
+                          />
+                          <Icon
+                            iconName="CloudUpload"
+                            style={{
+                              fontSize: "38px",
+                              color: "#5A2A82",
+                              marginBottom: "10px",
+                            }}
+                          />
+                          <p>Drag and drop files here, or click to select files</p>
+                          <div>
+                          </div>
+                          <p>
+                            {this.state.uploadedFileName
+                              ? ""
+                              : this.state.uploadedFileError
+                              ? ""
+                              : this.state.fileError}
+                          </p>
+                        </Stack>
+                        {this.state.uploadedFileName && (
+                          <Stack
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              marginRight: "60px",
+                            }}
+                          >
+                            <Icon
+                              iconName="Document"
+                              style={{
+                                marginRight: "8px",
+                                fontSize: "20px",
+                                color: "#5A2A82",
+                                marginLeft: "10%",
+                                marginTop: "5px",
+                              }}
+                            />
+                            <span>{this.state.uploadedFileName}</span>
+                          </Stack>
+                        )}
+                      </Stack>
+                    )}
+                </Dropzone>
+                </Stack>
+                <Stack className={styles.modalDropdownStack}>
+                <Dropdown
+                   placeholder="Select Library"
+                 label="Select Library"
+                options={libraries}
+                  styles={dropdownStyles}
+                  onChange={(e, selection: any) => { this.setState({ selectedDocLib: selection.key }) }}
+                />
+
+                <Dropdown
+                placeholder="Select Product group"
+                label="Product Group"
+                options={options}
+                onChange={(e,selection:any)=>{this.setState({selectedProductGroup:selection.key})}}
+                >
+                </Dropdown>
+                <Dropdown
+                  placeholder="Select Application"
+                  label="Label"
+                  options={options}
+                  onChange={(e,selection:any)=>{this.setState({selectedApplication:selection.key})}}
+                  >
+
+                </Dropdown>
+
+</Stack>
+
+       
+                <Stack className={styles.footerContent}>
+                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>
+  Upload
+</PrimaryButton>
+
+  <PrimaryButton className={`${styles.seeAll} ${styles.standardButton}`} onClick={()=>{this.setState({IsAdd:false})}}>
+    Cancel
+  </PrimaryButton>
+</Stack>
+
+          </Modal>
+
+            <Modal
+            isOpen={this.state.createFolderPopUp}
+            onDismiss={()=>{this.setState({createFolderPopUp:false})}}
+            isBlocking={false}
+            styles={{main: { width: "60%", height: "50%" } }}
+            >
+                <Stack horizontal className={`${styles.headingStyle}`}>
+              <Text variant={"xLarge"} className={`${styles.popupHeadingText}`}>
+                Add Folder
+              </Text>
+
+              <IconButton
+                iconProps={{ iconName: "Cancel" }}
+                className={`${styles.cancelBtn}`}
+                title="Cancel"
+                ariaLabel="Cancel"
+                onClick={() => {
+                  this.setState({ createFolderPopUp: false });
+                }}
+                style={{
+                  fontSize: "50px",
+                  color:"#2E3B4E",
+                  opacity: "1",
+                  marginRight:"10px",
+                  marginTop:"10px"
+                  // Adjust spacing as needed
+                }}
+              />
+            </Stack>
+
+            <Stack className={styles.dropZoneCss}>
+                
+                <TextField
+                  label="Folder name"
+                  placeholder="Folder Name"
+                  value={this.state.folderName}
+                  onChange={(
+                    e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+                    newValue?: string | undefined
+                  ) => this.setState({ folderName: newValue || "" })}
+                  required
+                />
+
+<Dropdown
+                   placeholder="Select Library"
+                 label="Select Library"
+                options={libraries}
+                  styles={dropdownStyles}
+                  onChange={(e, selection: any) => { this.setState({ selectedDocLib: selection.key }) }}
+                />
+
+
+            </Stack>
+
+            <Stack className={styles.footerContent}>
+                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.createFolder}>
+  Create Folder
+</PrimaryButton>
+
+  <PrimaryButton className={`${styles.seeAll} ${styles.standardButton}`}  onClick={() => {
+                  this.setState({ createFolderPopUp: false });
+                }}>
+    Cancel
+  </PrimaryButton>
+  </Stack>
+
+            </Modal>
+ 
 
         </Stack>
   </section>
