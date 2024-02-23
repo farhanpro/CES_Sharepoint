@@ -39,7 +39,7 @@ let sp: SPFI;
 let commonService: any = null;
 // let items: any = null;
 const dropdownStyles: Partial<IDropdownStyles> = {
-  dropdown: { width: 160 ,borderRadius:4},
+  dropdown: { width:180 ,borderRadius:4},
 };
 
 let options: IDropdownOption[] = [];
@@ -469,6 +469,16 @@ applicationGroup = async (e:any,selection:any) =>{
     this.componentDidMount();
     return;
   }
+  if(selectedPRoductkey == "All")
+  {
+    const filterAeResources = this.state.CesArr.filter(item => {return  item.application == selection.key;});
+    const filterAppIT = this.state.ITArr.filter(item=>{return item.application == selection.key});
+    const filterCPArr = this.state.CPArr.filter(item=>{return item.application == selection.key});
+    const filterCTArr = this.state.ITArr.filter(item=>{return item.application == selection.key});
+  
+  this.setState({ CesArr: filterAeResources,ITArr:filterAppIT,CPArr:filterCPArr,CTInfoArr:filterCTArr });
+  }
+  else{
   this.setState({CesArr:[],ITArr:[],CPArr:[],CTInfoArr:[]})
   await this.componentDidMount();
   const filterAeResources = this.state.CesArr.filter(item => {return item.productGroup == selectedPRoductkey && item.application == selection.key;});
@@ -477,6 +487,7 @@ applicationGroup = async (e:any,selection:any) =>{
   const filterCTArr = this.state.ITArr.filter(item=>{return item.productGroup == selectedPRoductkey && item.application == selection.key});
 
 this.setState({ CesArr: filterAeResources,ITArr:filterAppIT,CPArr:filterCPArr,CTInfoArr:filterCTArr });
+  }
 }
 
 fileTypeFunction = async (event:any,selection:any) =>{
@@ -573,17 +584,22 @@ renderDropdownItem = (item:any) => {
         options={options}
         styles={dropdownStyles}
         onChange={this.Productgroup}
+        disabled={true}
         onRenderOption={this.renderDropdownItem}
       />
         <Dropdown placeholder="Select" label="Applications" 
   options={options}
   styles={dropdownStyles}
+ 
   onChange={this.applicationGroup}
+
+  onRenderOption={this.renderDropdownItem}
 />
         <Dropdown
   placeholder="Select"
   label="File type"
   options={fileType}
+ 
   styles={{ 
     dropdown: { 
       width: '200px' // Adjust the width as needed
@@ -591,6 +607,7 @@ renderDropdownItem = (item:any) => {
     ...dropdownStyles // If you have additional styles, spread them here
   }}
   onChange={this.fileTypeFunction}
+  onRenderOption={this.renderDropdownItem}
 />
         </Stack>
         
@@ -996,6 +1013,7 @@ renderDropdownItem = (item:any) => {
                  label="Select Library"
                 options={libraries}
                   styles={dropdownStyles}
+                  required={true}
                   onChange={(e, selection: any) => { this.setState({ selectedDocLib: selection.key }) }}
                 />
 
@@ -1003,6 +1021,7 @@ renderDropdownItem = (item:any) => {
                 placeholder="Select Product group"
                 label="Product Group"
                 options={options}
+                required={true}
                 onChange={(e,selection:any)=>{this.setState({selectedProductGroup:selection.key})}}
                 >
                 </Dropdown>
@@ -1010,6 +1029,7 @@ renderDropdownItem = (item:any) => {
                   placeholder="Select Application"
                   label="Label"
                   options={options}
+                  required={true}
                   onChange={(e,selection:any)=>{this.setState({selectedApplication:selection.key})}}
                   >
 
@@ -1019,7 +1039,7 @@ renderDropdownItem = (item:any) => {
 
        
                 <Stack className={styles.footerContent}>
-                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>
+                <PrimaryButton disabled={this.state.uploadedFileName == "" || this.state.selectedProductGroup == "" || this.state.selectedDocLib == "" || this.state.selectedApplication == "" }  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.handleFileUpload}>
   Upload
 </PrimaryButton>
 
@@ -1078,6 +1098,7 @@ renderDropdownItem = (item:any) => {
                  label="Select Library"
                 options={libraries}
                   styles={dropdownStyles}
+                  required={true}
                   onChange={(e, selection: any) => { this.setState({ selectedDocLib: selection.key }) }}
                 />
 
@@ -1085,7 +1106,7 @@ renderDropdownItem = (item:any) => {
             </Stack>
 
             <Stack className={styles.footerContent}>
-                <PrimaryButton  className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.createFolder}>
+                <PrimaryButton disabled={this.state.folderName == "" || this.state.selectedDocLib == ""} className={`${styles.chooseBtn} ${styles.standardButton}`} onClick={this.createFolder}>
   Create Folder
 </PrimaryButton>
 
